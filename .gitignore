@@ -25,3 +25,6 @@ lerna-debug.log*
 
 # pycharm.idea
 .idea/
+
+# vscode
+.vscode/
