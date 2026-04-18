@@ -5,6 +5,7 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { validate } from './common/env.validation.js';
 import { winstonConfig } from './common/logger/winston.config.js';
+import { IngestionModule } from './modules/ingestion/ingestion.module.js';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { winstonConfig } from './common/logger/winston.config.js';
       useFactory: (configService: ConfigService) =>
         winstonConfig(configService),
     }),
+    IngestionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
