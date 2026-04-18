@@ -92,6 +92,18 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * Strip Wikipedia boilerplate sections that add no value to RAG retrieval:
+ * == See also ==, == References ==, == Further reading ==, == External links ==, etc.
+ * Anything from the first occurrence of a top-level section separator onwards.
+ */
+function cleanContent(text: string): string {
+  // Match the first == Section == header that marks end-of-body content
+  const boilerplatePattern = /\n\n\n?== (?:See also|References|Notes|Further reading|External links|Bibliography|Footnotes) ==/i;
+  const idx = text.search(boilerplatePattern);
+  return (idx !== -1 ? text.slice(0, idx) : text).trim();
+}
+
 async function fetchArticle(title: string): Promise<string | null> {
   const url = new URL('https://en.wikipedia.org/w/api.php');
   url.searchParams.set('action', 'query');
@@ -144,7 +156,8 @@ async function main() {
     }
 
     try {
-      const content = await fetchArticle(title);
+      const rawContent = await fetchArticle(title);
+      const content = rawContent ? cleanContent(rawContent) : null;
 
       if (!content) {
         console.warn(`  ⚠  No content found for "${title}"`);
@@ -173,6 +186,25 @@ async function main() {
     // Respect Wikipedia rate limits — 200ms between requests
     await sleep(200);
   }
+
+  // ─── Post-process: clean already-downloaded files ──────────────────────────
+  console.log('\n🧹 Cleaning existing files (stripping boilerplate sections)...');
+  const existing = fs.readdirSync(outputDir).filter((f) => f.endsWith('.json'));
+  let cleaned = 0;
+  for (const file of existing) {
+    const filePath = path.join(outputDir, file);
+    const article = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as RawArticle;
+    const cleanedContent = cleanContent(article.content);
+    if (cleanedContent !== article.content) {
+      fs.writeFileSync(
+        filePath,
+        JSON.stringify({ ...article, content: cleanedContent }, null, 2),
+        'utf-8',
+      );
+      cleaned++;
+    }
+  }
+  console.log(`  ✓  ${cleaned} file(s) updated`);
 
   console.log('\n─────────────────────────────────────────');
   console.log(`✅ Done: ${success} succeeded, ${failed} failed`);
