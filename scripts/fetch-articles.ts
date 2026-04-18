@@ -99,7 +99,8 @@ function sleep(ms: number): Promise<void> {
  */
 function cleanContent(text: string): string {
   // Match the first == Section == header that marks end-of-body content
-  const boilerplatePattern = /\n\n\n?== (?:See also|References|Notes|Further reading|External links|Bibliography|Footnotes) ==/i;
+  const boilerplatePattern =
+    /\n\n\n?== (?:See also|References|Notes|Further reading|External links|Bibliography|Footnotes) ==/i;
   const idx = text.search(boilerplatePattern);
   return (idx !== -1 ? text.slice(0, idx) : text).trim();
 }
@@ -188,12 +189,16 @@ async function main() {
   }
 
   // ─── Post-process: clean already-downloaded files ──────────────────────────
-  console.log('\n🧹 Cleaning existing files (stripping boilerplate sections)...');
+  console.log(
+    '\n🧹 Cleaning existing files (stripping boilerplate sections)...',
+  );
   const existing = fs.readdirSync(outputDir).filter((f) => f.endsWith('.json'));
   let cleaned = 0;
   for (const file of existing) {
     const filePath = path.join(outputDir, file);
-    const article = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as RawArticle;
+    const article = JSON.parse(
+      fs.readFileSync(filePath, 'utf-8'),
+    ) as RawArticle;
     const cleanedContent = cleanContent(article.content);
     if (cleanedContent !== article.content) {
       fs.writeFileSync(
