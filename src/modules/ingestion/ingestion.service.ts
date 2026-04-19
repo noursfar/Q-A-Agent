@@ -168,7 +168,7 @@ export class IngestionService {
       const batch = chunks.slice(i, i + BATCH_SIZE);
       const texts = batch.map((c) => c.text);
 
-      this.logger.debug(
+      this.logger.log(
         `Embedding batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(chunks.length / BATCH_SIZE)} (${texts.length} chunks)`,
       );
 
@@ -243,7 +243,7 @@ export class IngestionService {
     for (let i = 0; i < points.length; i += BATCH_SIZE) {
       const batch = points.slice(i, i + BATCH_SIZE);
       await this.qdrantClient.upsert(this.collectionName, { points: batch });
-      this.logger.debug(`Upserted ${batch.length} points (offset ${i})`);
+      this.logger.log(`Upserted ${batch.length} points (offset ${i})`);
     }
   }
 

@@ -46,7 +46,7 @@ export class ChatController {
     }
 
     const { message, sessionId } = parsed.data;
-    this.logger.debug(`[${sessionId}] POST /chat — "${message}"`);
+    this.logger.log(`[${sessionId}] POST /chat — "${message}"`);
 
     // ── 2. Start the RAG pipeline ─────────────────────────────────────────────
     const { streamResult, getCitations } = await this.chatService.chat(

@@ -75,11 +75,11 @@ export class ChatService {
     streamResult: ReturnType<typeof streamText>;
     getCitations: () => Promise<CitationResult>;
   }> {
-    this.logger.debug(`[${sessionId}] Incoming: "${message}"`);
+    this.logger.log(`[${sessionId}] Incoming: "${message}"`);
 
     // ── Stage 1: Retrieve relevant context ──────────────────────────────────
     const context = await this.retrievalService.retrieve(message);
-    this.logger.debug(
+    this.logger.log(
       `[${sessionId}] Retrieval returned ${context.length} reranked chunks`,
     );
 
@@ -111,7 +111,7 @@ export class ChatService {
        */
       getCitations: async (): Promise<CitationResult> => {
         const fullAnswer = await streamResult.text;
-        this.logger.debug(
+        this.logger.log(
           `[${sessionId}] Stream complete. Generating citations...`,
         );
 
