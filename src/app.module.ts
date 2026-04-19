@@ -7,6 +7,7 @@ import { validate } from './common/env.validation.js';
 import { winstonConfig } from './common/logger/winston.config.js';
 import { IngestionModule } from './modules/ingestion/ingestion.module.js';
 import { RetrievalModule } from './modules/retrieval/retrieval.module.js';
+import { ChatModule } from './modules/chat/chat.module.js';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { RetrievalModule } from './modules/retrieval/retrieval.module.js';
     }),
     IngestionModule,
     RetrievalModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
