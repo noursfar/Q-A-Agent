@@ -208,7 +208,7 @@ async function bootstrap() {
 
   // ── Load test cases ──────────────────────────────────────────────────────────
   const testCasesPath = path.resolve(
-    'src/modules/evaluation/data/test-cases.json',
+    'evaluation/data/test-cases.json',
   );
   if (!fs.existsSync(testCasesPath)) {
     console.error(`❌ Test cases file not found: ${testCasesPath}`);
