@@ -59,6 +59,8 @@ Build an intelligent Q&A agent that answers questions over a corpus of documents
 
 **Two-Stage Retrieval Pipeline:** The `RetrievalService` implements a modern retrieve-and-rerank architecture. It first queries Qdrant for a broad net of top-20 semantic matches, then passes them through Voyage AI's `rerank-2` cross-encoder to distill down to the 5 most precise context chunks.
 
+**Modular Prompt Engineering:** Three pure-function prompt builders (`system.prompt.ts`, `citation.prompt.ts`, `evaluation.prompt.ts`) handle RAG generation, citation auditing, and LLM-as-judge scoring respectively. Zero NestJS coupling makes them independently testable.
+
 ---
 
 ## 🧠 Technical Choices
@@ -87,8 +89,19 @@ Voyage AI specifically optimizes its models for retrieval quality on semantic se
 Pure vector similarity (Dense Retrieval) is incredibly fast but approximate, as it squashes entire chunks into single points in space. To combat this, we utilize a two-stage retrieval pipeline:
 1.  **Retrieve:** We query Qdrant to fetch the *top-20* nearest candidates, casting a wide net to guarantee high **recall**.
 2.  **Rerank:** We pass the user's query and those 20 candidates into the `rerank-2` Voyage cross-encoder. The cross-encoder applies deep, explicit attention mechanisms between the query's tokens and each candidate's tokens. It scores them based on true semantic reasoning, surfacing the *top-5* most genuinely relevant chunks.
-**Result:** This dramatically improves precision without sacrificing recall, guaranteeing that the LLM is fed the highest-quality context possible.
+    **Result:** This dramatically improves precision without sacrificing recall, guaranteeing that the LLM is fed the highest-quality context possible.
+
+### 6. Prompts Strategy
+Three dedicated prompt builders live in `src/common/prompts/`:
+
+| File | Role |
+|------|------|
+| `system.prompt.ts` | Injects retrieved context via XML delimiters, enforces `[Source: Title]` inline citation format, provides two few-shot examples (answerable + refusal), and layers 6 guardrails (context-only, no hallucination, domain scope, prompt injection defense) |
+| `citation.prompt.ts` | Acts as a citation auditor — decomposes the answer into atomic claims, maps each to a source chunk, and flags any uncited claims as hallucination signals in an `uncitedClaims[]` array |
+| `evaluation.prompt.ts` | LLM-as-judge with three RAGAS-inspired metrics: **Faithfulness** (40%) / **Answer Relevance** (40%) / **Completeness** (20%). Each scored 1–5 with mandatory reasoning. Outputs `overallScore` as a weighted average |
+
+Faithfulness is weighted highest (40%) because hallucination is the most critical failure mode in a production RAG system.
 
 ---
 
-*Note: Prompt Engineering strategies and Evaluation Results will be populated in Phase 4.*
+*Note: Evaluation Results and end-to-end test runs will be documented in Phase 5.*
