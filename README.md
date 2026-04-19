@@ -107,6 +107,27 @@ Faithfulness is weighted highest (40%) because hallucination is the most critica
 - **In-Memory Session Memory:** Follow-up questions are supported by maintaining a strict sliding window of the last 10 messages (`Map<string, ModelMessage[]>`). Older token-heavy context is pruned to keep requests cost-effective.
 - **Server-Sent Events (SSE):** We bypass traditional static HTTP responses and use SSE to multiplex two different streams over a single connection. The LLM generative text uses the `event: text` channel (via `streamText`), and immediately after it finishes, an isolated `event: citations` channel delivers a structured JSON citations array (via `generateObject`).
 
+### 8. Evaluation Harness
+- **Offline Batch Architecture:** Evaluation runs as a standalone script (`scripts/evaluate.ts`) that bootstraps the NestJS DI context directly. It runs independently of the Fastify HTTP loop.
+- **Test Corpus:** 40+ manually crafted test cases (`evaluation/data/test-cases.json`) mapped against the exact AI/ML Wikipedia snapshot. Cases are divided into four specific targets: **Factual**, **Multi-Document** (synthesis), **Follow-up** (tests sliding-window memory using `sessionId` injection), and **Out-of-Scope** (tests hallucination refusal boundaries).
+- **Scoring Pipeline:**
+  1. **Relevance (1-5):** Derived using LLM-as-a-judge (`buildEvaluationPrompt`) looking exactly at Answer Relevance.
+  2. **Groundedness (1-5):** Derived using LLM-as-a-judge mapped to the Faithfulness dimension.
+  3. **Citation Accuracy (0-100%):** Programmatic exact-string fuzzy check comparing the generated `[Source: ...]` block output from `generateObject` against the known ground-truth `expectedSourceTitles` array.
+
 ---
 
-*Note: Evaluation Results and end-to-end test runs will be documented in Phase 6.*
+## 🧪 Running the Evaluation
+
+To execute the offline evaluation sweep (requires Qdrant to be running and collection populated):
+
+```bash
+pnpm evaluate
+```
+
+This command will:
+1. Rebuild the latest NestJS context.
+2. Spin up a direct RAG pipeline.
+3. Test all 40+ cases sequentially while running LLM-as-judge assessments.
+4. Print a live formatting table to standard out.
+5. Save a rigid structured JSON report to `evaluation/results/evaluation-results.json`.

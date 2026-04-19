@@ -1,0 +1,245 @@
+[
+  {
+    "id": "factual-001",
+    "category": "factual",
+    "question": "What is the Transformer architecture and when was it introduced?",
+    "expectedSourceTitles": ["Transformer (machine learning model)"]
+  },
+  {
+    "id": "factual-002",
+    "category": "factual",
+    "question": "Who created the Claude language model series?",
+    "expectedSourceTitles": ["Claude (language model)"]
+  },
+  {
+    "id": "factual-003",
+    "category": "factual",
+    "question": "What is Word2vec used for?",
+    "expectedSourceTitles": ["Word2vec"]
+  },
+  {
+    "id": "factual-004",
+    "category": "factual",
+    "question": "What does a Convolutional Neural Network (CNN) excel at?",
+    "expectedSourceTitles": ["Convolutional neural network"]
+  },
+  {
+    "id": "factual-005",
+    "category": "factual",
+    "question": "Explain the concept of Algorithmic Bias.",
+    "expectedSourceTitles": ["Algorithmic bias"]
+  },
+  {
+    "id": "factual-006",
+    "category": "factual",
+    "question": "What organization developed AlphaGo?",
+    "expectedSourceTitles": ["AlphaGo", "Google DeepMind"]
+  },
+  {
+    "id": "factual-007",
+    "category": "factual",
+    "question": "What does BERT stand for?",
+    "expectedSourceTitles": ["BERT (language model)"]
+  },
+  {
+    "id": "factual-008",
+    "category": "factual",
+    "question": "What is the main function of an attention mechanism in neural networks?",
+    "expectedSourceTitles": ["Attention (machine learning)"]
+  },
+  {
+    "id": "factual-009",
+    "category": "factual",
+    "question": "Who founded Hugging Face?",
+    "expectedSourceTitles": ["Hugging Face"]
+  },
+  {
+    "id": "factual-010",
+    "category": "factual",
+    "question": "What are generative adversarial networks (GANs) composed of?",
+    "expectedSourceTitles": ["Generative adversarial network"]
+  },
+  {
+    "id": "factual-011",
+    "category": "factual",
+    "question": "What is the core idea behind deep learning?",
+    "expectedSourceTitles": ["Deep learning"]
+  },
+  {
+    "id": "factual-012",
+    "category": "factual",
+    "question": "What is the purpose of fine-tuning in machine learning?",
+    "expectedSourceTitles": ["Fine-tuning (deep learning)"]
+  },
+  {
+    "id": "factual-013",
+    "category": "factual",
+    "question": "What is PyTorch primarily used for?",
+    "expectedSourceTitles": ["PyTorch"]
+  },
+  {
+    "id": "factual-014",
+    "category": "factual",
+    "question": "Describe the main role of TensorFlow.",
+    "expectedSourceTitles": ["TensorFlow"]
+  },
+  {
+    "id": "factual-015",
+    "category": "factual",
+    "question": "What is prompt engineering?",
+    "expectedSourceTitles": ["Prompt engineering"]
+  },
+
+  {
+    "id": "multi-doc-001",
+    "category": "multi-doc",
+    "question": "How do GPT-4 and Claude differ in their development origins?",
+    "expectedSourceTitles": ["GPT-4", "Claude (language model)", "OpenAI", "Anthropic"]
+  },
+  {
+    "id": "multi-doc-002",
+    "category": "multi-doc",
+    "question": "Explain how embeddings support Retrieval-Augmented Generation.",
+    "expectedSourceTitles": ["Word embedding", "Retrieval-augmented generation"]
+  },
+  {
+    "id": "multi-doc-003",
+    "category": "multi-doc",
+    "question": "What is the relationship between Google DeepMind and AlphaGo?",
+    "expectedSourceTitles": ["Google DeepMind", "AlphaGo"]
+  },
+  {
+    "id": "multi-doc-004",
+    "category": "multi-doc",
+    "question": "How does NLP utilize recurrent neural networks?",
+    "expectedSourceTitles": ["Natural language processing", "Recurrent neural network"]
+  },
+  {
+    "id": "multi-doc-005",
+    "category": "multi-doc",
+    "question": "Discuss existential risks from AGI in relation to AI safety.",
+    "expectedSourceTitles": ["Existential risk from artificial general intelligence", "AI safety"]
+  },
+  {
+    "id": "multi-doc-006",
+    "category": "multi-doc",
+    "question": "How does Anthropic's approach to language models compare to OpenAI's?",
+    "expectedSourceTitles": ["Anthropic", "OpenAI", "Claude (language model)", "ChatGPT"]
+  },
+  {
+    "id": "multi-doc-007",
+    "category": "multi-doc",
+    "question": "Explain the role of attention mechanisms within large language models.",
+    "expectedSourceTitles": ["Attention (machine learning)", "Large language model"]
+  },
+  {
+    "id": "multi-doc-008",
+    "category": "multi-doc",
+    "question": "How did the transformer architecture influence BERT and GPT models?",
+    "expectedSourceTitles": ["Transformer (machine learning model)", "BERT (language model)", "GPT-4", "OpenAI"]
+  },
+  {
+    "id": "multi-doc-009",
+    "category": "multi-doc",
+    "question": "Compare TensorFlow and PyTorch.",
+    "expectedSourceTitles": ["TensorFlow", "PyTorch"]
+  },
+  {
+    "id": "multi-doc-010",
+    "category": "multi-doc",
+    "question": "What does Meta AI contribute to the open-source LLM landscape with LLaMA?",
+    "expectedSourceTitles": ["Meta AI", "Llama (language model)"]
+  },
+
+  {
+    "id": "followup-001a",
+    "category": "followup",
+    "question": "Who developed ChatGPT?",
+    "sessionId": "eval-session-001"
+  },
+  {
+    "id": "followup-001b",
+    "category": "followup",
+    "question": "What underlying model version powers its latest iteration?",
+    "sessionId": "eval-session-001"
+  },
+  {
+    "id": "followup-002a",
+    "category": "followup",
+    "question": "What is DALL-E?",
+    "sessionId": "eval-session-002"
+  },
+  {
+    "id": "followup-002b",
+    "category": "followup",
+    "question": "How does it compare to other generative models?",
+    "sessionId": "eval-session-002"
+  },
+  {
+    "id": "followup-003a",
+    "category": "followup",
+    "question": "What is NVIDIA famous for in the AI hardware space?",
+    "sessionId": "eval-session-003"
+  },
+  {
+    "id": "followup-003b",
+    "category": "followup",
+    "question": "Why are GPUs so important for training neural networks?",
+    "sessionId": "eval-session-003"
+  },
+  {
+    "id": "followup-004a",
+    "category": "followup",
+    "question": "Define Reinforcement Learning.",
+    "sessionId": "eval-session-004"
+  },
+  {
+    "id": "followup-004b",
+    "category": "followup",
+    "question": "Was it used to train AlphaGo?",
+    "sessionId": "eval-session-004"
+  },
+
+  {
+    "id": "out-of-scope-001",
+    "category": "out-of-scope",
+    "question": "What is the capital of France?",
+    "expectedSourceTitles": []
+  },
+  {
+    "id": "out-of-scope-002",
+    "category": "out-of-scope",
+    "question": "How do you bake a chocolate cake?",
+    "expectedSourceTitles": []
+  },
+  {
+    "id": "out-of-scope-003",
+    "category": "out-of-scope",
+    "question": "What are the rules of basketball?",
+    "expectedSourceTitles": []
+  },
+  {
+    "id": "out-of-scope-004",
+    "category": "out-of-scope",
+    "question": "Who won the World Cup in 2022?",
+    "expectedSourceTitles": []
+  },
+  {
+    "id": "out-of-scope-005",
+    "category": "out-of-scope",
+    "question": "Can you summarize the plot of Harry Potter?",
+    "expectedSourceTitles": []
+  },
+  {
+    "id": "out-of-scope-006",
+    "category": "out-of-scope",
+    "question": "What is the fastest animal on Earth?",
+    "expectedSourceTitles": []
+  },
+  {
+    "id": "out-of-scope-007",
+    "category": "out-of-scope",
+    "question": "How tall is Mount Everest?",
+    "expectedSourceTitles": []
+  }
+]
