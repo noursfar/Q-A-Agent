@@ -60,6 +60,7 @@ Build an intelligent Q&A agent that answers questions over a corpus of documents
 **Two-Stage Retrieval Pipeline:** The `RetrievalService` implements a modern retrieve-and-rerank architecture. It first queries Qdrant for a broad net of top-20 semantic matches, then passes them through Voyage AI's `rerank-2` cross-encoder to distill down to the 5 most precise context chunks.
 
 **Modular Prompt Engineering:** Three pure-function prompt builders (`system.prompt.ts`, `citation.prompt.ts`, `evaluation.prompt.ts`) handle RAG generation, citation auditing, and LLM-as-judge scoring respectively. Zero NestJS coupling makes them independently testable.
+**Streaming Chat Endpoint:** A `POST /chat` endpoint uses Server-Sent Events (SSE) to multiplex the Vercel AI SDK `streamText` response with a trailing structured citations block (via `generateObject`) and includes sliding-window session memory.
 
 ---
 
@@ -102,6 +103,10 @@ Three dedicated prompt builders live in `src/common/prompts/`:
 
 Faithfulness is weighted highest (40%) because hallucination is the most critical failure mode in a production RAG system.
 
+### 7. Chat & Streaming Architecture
+- **In-Memory Session Memory:** Follow-up questions are supported by maintaining a strict sliding window of the last 10 messages (`Map<string, ModelMessage[]>`). Older token-heavy context is pruned to keep requests cost-effective.
+- **Server-Sent Events (SSE):** We bypass traditional static HTTP responses and use SSE to multiplex two different streams over a single connection. The LLM generative text uses the `event: text` channel (via `streamText`), and immediately after it finishes, an isolated `event: citations` channel delivers a structured JSON citations array (via `generateObject`).
+
 ---
 
-*Note: Evaluation Results and end-to-end test runs will be documented in Phase 5.*
+*Note: Evaluation Results and end-to-end test runs will be documented in Phase 6.*
