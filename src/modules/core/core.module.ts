@@ -4,7 +4,7 @@ import { createEmbeddingClient } from '../../common/utils/embedding-provider.fac
 import { createQdrantClient } from '../../common/utils/qdrant-provider.factory.js';
 import { createLlmModel } from '../../common/utils/llm-provider.factory.js';
 
-@Global()
+@Global() //@Global() to avoid needing to explicitly imports
 @Module({
   providers: [
     {
