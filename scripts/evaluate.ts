@@ -14,6 +14,7 @@ import { buildSystemPrompt } from '../src/common/prompts/system.prompt.js';
 import { buildCitationPrompt } from '../src/common/prompts/citation.prompt.js';
 import { buildEvaluationPrompt } from '../src/common/prompts/evaluation.prompt.js';
 import { createLlmModel } from '../src/common/utils/llm-provider.factory.js';
+import { CitationSchema } from '../src/modules/chat/dto/chat.dto.js';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -63,21 +64,6 @@ const EvaluationSchema = z.object({
     reasoning: z.string(),
   }),
   overallScore: z.number(),
-});
-
-/**
- * Zod schema for the structured citation extraction block.
- * Matches CitationSchema in chat.dto.ts but standalone for this script.
- */
-const CitationExtractSchema = z.object({
-  citations: z.array(
-    z.object({
-      claim: z.string(),
-      sourceTitle: z.string(),
-      chunkIndex: z.number(),
-    }),
-  ),
-  uncitedClaims: z.array(z.string()),
 });
 
 // ─── Citation Accuracy ────────────────────────────────────────────────────────
@@ -270,7 +256,7 @@ async function bootstrap() {
       const citationPrompt = buildCitationPrompt(answer, context);
       const { object: citationObj } = await generateObject({
         model,
-        schema: CitationExtractSchema,
+        schema: CitationSchema,
         prompt: citationPrompt,
       });
       const citedSources = citationObj.citations.map((c) => c.sourceTitle);
