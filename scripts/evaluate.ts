@@ -72,11 +72,12 @@ const EvaluationSchema = z.object({
 const CitationExtractSchema = z.object({
   citations: z.array(
     z.object({
-      id: z.number(),
+      claim: z.string(),
       sourceTitle: z.string(),
-      excerpt: z.string(),
+      chunkIndex: z.number(),
     }),
   ),
+  uncitedClaims: z.array(z.string()),
 });
 
 // ─── Citation Accuracy ────────────────────────────────────────────────────────

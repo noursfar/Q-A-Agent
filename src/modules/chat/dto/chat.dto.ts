@@ -22,11 +22,16 @@ export type ChatRequestDto = z.infer<typeof ChatRequestSchema>;
 export const CitationSchema = z.object({
   citations: z.array(
     z.object({
-      id: z.number().describe('The chunk identifier number'),
+      claim: z.string().describe('The specific factual claim from the answer'),
       sourceTitle: z.string().describe('The title of the source document'),
-      excerpt: z.string().describe('A short excerpt supporting the claim'),
+      chunkIndex: z.number().describe('The exact chunk index for traceability'),
     }),
   ),
+  uncitedClaims: z
+    .array(z.string())
+    .describe(
+      'Claims that could not be traced to any source (potential hallucinations)',
+    ),
 });
 
 export type CitationResult = z.infer<typeof CitationSchema>;

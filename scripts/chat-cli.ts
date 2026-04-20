@@ -86,11 +86,18 @@ function askQuestion() {
                   console.log('\n\n📚 SOURCES EXTRACTED:');
                   if (parsed.citations && parsed.citations.length > 0) {
                     parsed.citations.forEach((c: any) => {
-                      console.log(`\n  [${c.id}] ${c.sourceTitle}`);
+                      console.log(`\n  [ Chunk ${c.chunkIndex} ] ${c.sourceTitle}`);
                       console.log(`      "${c.excerpt}"`);
                     });
                   } else {
                     console.log('  No external sources were referenced for this answer.');
+                  }
+                  
+                  if (parsed.uncitedClaims && parsed.uncitedClaims.length > 0) {
+                    console.log('\n⚠️  UNVERIFIED CLAIMS (Potential Hallucinations):');
+                    parsed.uncitedClaims.forEach((c: string) => {
+                      console.log(`  - ${c}`);
+                    });
                   }
                 } catch {
                   console.log('\n\n📚 SOURCES EXTRACTED:', dataStr);
