@@ -5,9 +5,10 @@ interface CitationPopoverProps {
   index: number;
   sourceTitle: string;
   citations: Citation[];
+  onOpenDetail?: () => void;
 }
 
-export default function CitationPopover({ index, sourceTitle, citations }: CitationPopoverProps) {
+export default function CitationPopover({ index, sourceTitle, citations, onOpenDetail }: CitationPopoverProps) {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -31,7 +32,10 @@ export default function CitationPopover({ index, sourceTitle, citations }: Citat
       <button
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpenDetail?.();
+        }}
         className="inline-flex items-center justify-center min-w-[1.25rem] h-[1.25rem] mx-0.5 rounded-full bg-amber-500/10 text-amber-500 text-[10px] font-bold hover:bg-amber-500/20 hover:scale-110 transition-all cursor-pointer border border-amber-500/20 align-text-bottom"
       >
         {index}

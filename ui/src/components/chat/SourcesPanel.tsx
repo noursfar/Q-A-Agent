@@ -12,7 +12,7 @@ export default function SourcesPanel({ citation, isOpen, onClose }: SourcesPanel
       {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/10 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none z-40"
           onClick={onClose}
         />
       )}

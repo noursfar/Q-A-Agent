@@ -84,7 +84,8 @@ export default function MessageBubble({ message, onCitationClick }: MessageBubbl
           <MarkdownRenderer 
             content={text} 
             citations={citations} 
-            uniqueSources={uniqueSources} 
+            uniqueSources={uniqueSources}
+            onCitationClick={onCitationClick}
           />
         </div>
 

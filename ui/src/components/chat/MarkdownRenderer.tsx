@@ -8,12 +8,14 @@ interface MarkdownRendererProps {
   content: string;
   citations: Citation[];
   uniqueSources: string[];
+  onCitationClick: (citation: Citation, index: number) => void;
 }
 
 function processInlineSources(
   text: string,
   uniqueSources: string[],
   citations: Citation[],
+  onCitationClick: (citation: Citation, index: number) => void,
 ): React.ReactNode[] {
   // Split the text by [Source: Title] or [Source: Title ] etc.
   const regex = /(\[Source:\s*[^\]]+\])/g;
@@ -27,12 +29,16 @@ function processInlineSources(
       
       // If we found it in our unique sources list, render the popover
       if (index > 0) {
+        const matchingCitation = citations.find(c => c.sourceTitle.toLowerCase().includes(sourceTitle.toLowerCase()) || sourceTitle.toLowerCase().includes(c.sourceTitle.toLowerCase()));
         return (
           <CitationPopover
             key={i}
             index={index}
             sourceTitle={sourceTitle}
             citations={citations}
+            onOpenDetail={() => {
+              if (matchingCitation) onCitationClick(matchingCitation, index - 1);
+            }}
           />
         );
       }
@@ -45,12 +51,13 @@ export default function MarkdownRenderer({
   content,
   citations,
   uniqueSources,
+  onCitationClick,
 }: MarkdownRendererProps) {
   const components: Components = {
     p({ children }) {
       const processChildren = (child: React.ReactNode): React.ReactNode => {
         if (typeof child === 'string') {
-          return processInlineSources(child, uniqueSources, citations);
+          return processInlineSources(child, uniqueSources, citations, onCitationClick);
         }
         return child;
       };
@@ -65,7 +72,7 @@ export default function MarkdownRenderer({
     li({ children }) {
       const processChildren = (child: React.ReactNode): React.ReactNode => {
         if (typeof child === 'string') {
-          return processInlineSources(child, uniqueSources, citations);
+          return processInlineSources(child, uniqueSources, citations, onCitationClick);
         }
         return child;
       };
