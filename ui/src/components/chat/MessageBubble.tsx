@@ -50,9 +50,17 @@ export default function MessageBubble({ message, onCitationClick }: MessageBubbl
 
   if (isUser) {
     return (
-      <div className="flex justify-end px-4 py-1.5 animate-[slideUp_0.4s_ease-out_forwards]">
-        <div className="max-w-[75%] px-4 py-2.5 rounded-2xl rounded-br-sm bg-gradient-to-br from-blue-500 to-blue-600 text-sm text-white leading-relaxed shadow-lg shadow-blue-500/10">
+      <div className="flex justify-end items-start gap-3 px-4 py-1.5 animate-[slideUp_0.4s_ease-out_forwards]">
+        {/* Message content */}
+        <div className="max-w-[75%] px-5 py-3 rounded-2xl bg-[#14B8A6]/10 border border-[#14B8A6]/20 text-sm text-white/90 leading-relaxed">
           {text}
+        </div>
+
+        {/* User avatar */}
+        <div className="w-8 h-8 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center shrink-0 mt-0.5">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4 text-white/40">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
         </div>
       </div>
     );
