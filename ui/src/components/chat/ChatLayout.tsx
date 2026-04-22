@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useSessionManager } from '../../hooks/useSessionManager';
@@ -47,13 +47,26 @@ export default function ChatLayout() {
     }),
   });
 
-  // When activeSessionId changes (due to user switching sessions), we should clear messages
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+  const handleSelectSession = useCallback((id: string) => {
+    switchSession(id);
     setMessages([]);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedCitation(null);
-  }, [activeSessionId, setMessages]);
+  }, [switchSession, setMessages]);
+
+  const handleNewChat = useCallback(() => {
+    createSession();
+    setMessages([]);
+    setSelectedCitation(null);
+  }, [createSession, setMessages]);
+
+  const handleDeleteSession = useCallback((id: string) => {
+    const isDeletingActive = id === activeSessionId;
+    deleteSession(id);
+    if (isDeletingActive) {
+      setMessages([]);
+      setSelectedCitation(null);
+    }
+  }, [deleteSession, activeSessionId, setMessages]);
 
   const handleSend = useCallback(
     (text: string) => {
@@ -83,9 +96,9 @@ export default function ChatLayout() {
           sessions={sessions}
           activeSessionId={activeSessionId}
           isOpen={isSidebarOpen}
-          onNewChat={createSession}
-          onSelectSession={switchSession}
-          onDeleteSession={deleteSession}
+          onNewChat={handleNewChat}
+          onSelectSession={handleSelectSession}
+          onDeleteSession={handleDeleteSession}
           onClose={() => setIsSidebarOpen(false)}
         />
 

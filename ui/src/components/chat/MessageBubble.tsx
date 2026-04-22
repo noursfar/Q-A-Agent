@@ -1,7 +1,7 @@
 import type { UIMessage } from 'ai';
 import type { Citation, CitationResult } from '../../types/chat';
 import MarkdownRenderer from './MarkdownRenderer';
-
+import { extractUniqueSources } from '../../utils/text';
 interface MessageBubbleProps {
   message: UIMessage;
   onCitationClick: (citation: Citation, index: number) => void;
@@ -45,8 +45,7 @@ export default function MessageBubble({ message, onCitationClick }: MessageBubbl
   const citations = citationResult?.citations ?? [];
 
   // Extract unique sources directly from the LLM's inline text
-  const sourceRegex = /\[Source:\s*([^\]]+)\]/g;
-  const uniqueSources = Array.from(new Set(Array.from(text.matchAll(sourceRegex)).map(m => m[1].trim())));
+  const uniqueSources = extractUniqueSources(text);
 
   if (isUser) {
     return (
