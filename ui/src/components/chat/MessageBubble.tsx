@@ -1,7 +1,6 @@
 import type { UIMessage } from 'ai';
 import type { Citation, CitationResult } from '../../types/chat';
 import MarkdownRenderer from './MarkdownRenderer';
-import CitationChip from './CitationChip';
 
 interface MessageBubbleProps {
   message: UIMessage;
@@ -12,7 +11,10 @@ interface MessageBubbleProps {
  * Extracts citations from the message's data parts (type === 'data-citations').
  */
 function extractCitations(message: UIMessage): CitationResult | null {
-  for (const part of message.parts) {
+  const parts = message.parts as UIMessage['parts'] | undefined;
+  if (!parts) return null;
+  
+  for (const part of parts) {
     if (part.type === 'data-citations') {
       return part.data as CitationResult;
     }
@@ -24,7 +26,13 @@ function extractCitations(message: UIMessage): CitationResult | null {
  * Extracts the full text content from the message's text parts.
  */
 function extractText(message: UIMessage): string {
-  return message.parts
+  const parts = message.parts as UIMessage['parts'] | undefined;
+  if (!parts) {
+    const fallback = message as unknown as { content?: string; text?: string };
+    return fallback.content || fallback.text || '';
+  }
+  
+  return parts
     .filter((p) => p.type === 'text')
     .map((p) => (p as { type: 'text'; text: string }).text)
     .join('');
@@ -35,6 +43,10 @@ export default function MessageBubble({ message, onCitationClick }: MessageBubbl
   const text = extractText(message);
   const citationResult = isUser ? null : extractCitations(message);
   const citations = citationResult?.citations ?? [];
+
+  // Extract unique sources directly from the LLM's inline text
+  const sourceRegex = /\[Source:\s*([^\]]+)\]/g;
+  const uniqueSources = Array.from(new Set(Array.from(text.matchAll(sourceRegex)).map(m => m[1].trim())));
 
   if (isUser) {
     return (
@@ -67,23 +79,36 @@ export default function MessageBubble({ message, onCitationClick }: MessageBubbl
       </div>
 
       {/* Message content */}
-      <div className="max-w-[80%] flex flex-col gap-2">
-        <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-navy-800/80 border border-white/5">
-          <MarkdownRenderer content={text} />
+      <div className="max-w-[85%] flex flex-col gap-0.5">
+        <div className="px-5 py-4 rounded-2xl rounded-tl-sm bg-[#1A2033] border border-white/5 shadow-sm text-[14px]">
+          <MarkdownRenderer 
+            content={text} 
+            citations={citations} 
+            uniqueSources={uniqueSources} 
+          />
         </div>
 
-        {/* Citation chips row */}
-        {citations.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5 px-1">
-            <span className="text-[11px] text-white/30 mr-1">Sources:</span>
-            {citations.map((c, idx) => (
-              <CitationChip
-                key={idx}
-                index={idx}
-                citation={c}
-                onClick={() => onCitationClick(c, idx)}
-              />
-            ))}
+        {/* Bottom Sources Bar */}
+        {uniqueSources.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 px-2 py-2">
+            <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest mr-1">Sources</span>
+            {uniqueSources.map((sourceTitle, i) => {
+              const index = i + 1;
+              const matchingCitation = citations.find(c => c.sourceTitle.toLowerCase().includes(sourceTitle.toLowerCase()) || sourceTitle.toLowerCase().includes(c.sourceTitle.toLowerCase()));
+              
+              return (
+                <button
+                  key={index}
+                  onClick={() => {
+                    if (matchingCitation) onCitationClick(matchingCitation, index - 1);
+                  }}
+                  className="group flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 transition-colors cursor-pointer"
+                >
+                  <span className="text-[11px] font-bold text-amber-500">[{index}]</span>
+                  <span className="text-xs text-white/60 group-hover:text-white/90 transition-colors">{sourceTitle}</span>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>

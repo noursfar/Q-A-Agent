@@ -1,15 +1,81 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Components } from 'react-markdown';
+import type { Citation } from '../../types/chat';
+import CitationPopover from './CitationPopover';
 
 interface MarkdownRendererProps {
   content: string;
+  citations: Citation[];
+  uniqueSources: string[];
+}
+
+function processInlineSources(
+  text: string,
+  uniqueSources: string[],
+  citations: Citation[],
+): React.ReactNode[] {
+  // Split the text by [Source: Title] or [Source: Title ] etc.
+  const regex = /(\[Source:\s*[^\]]+\])/g;
+  const parts = text.split(regex);
+
+  return parts.map((part, i) => {
+    const match = part.match(/^\[Source:\s*([^\]]+)\]$/);
+    if (match) {
+      const sourceTitle = match[1].trim();
+      const index = uniqueSources.indexOf(sourceTitle) + 1;
+      
+      // If we found it in our unique sources list, render the popover
+      if (index > 0) {
+        return (
+          <CitationPopover
+            key={i}
+            index={index}
+            sourceTitle={sourceTitle}
+            citations={citations}
+          />
+        );
+      }
+    }
+    return part;
+  });
 }
 
 export default function MarkdownRenderer({
   content,
+  citations,
+  uniqueSources,
 }: MarkdownRendererProps) {
   const components: Components = {
+    p({ children }) {
+      const processChildren = (child: React.ReactNode): React.ReactNode => {
+        if (typeof child === 'string') {
+          return processInlineSources(child, uniqueSources, citations);
+        }
+        return child;
+      };
+
+      const processed = Array.isArray(children)
+        ? children.flatMap(processChildren)
+        : processChildren(children);
+
+      return <p className="mb-4 last:mb-0 leading-relaxed">{processed}</p>;
+    },
+
+    li({ children }) {
+      const processChildren = (child: React.ReactNode): React.ReactNode => {
+        if (typeof child === 'string') {
+          return processInlineSources(child, uniqueSources, citations);
+        }
+        return child;
+      };
+
+      const processed = Array.isArray(children)
+        ? children.flatMap(processChildren)
+        : processChildren(children);
+
+      return <li className="mb-1 leading-relaxed">{processed}</li>;
+    },
 
     // Style code blocks
     code({ className, children }) {
