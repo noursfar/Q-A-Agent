@@ -98,6 +98,11 @@ export class ChatService {
       model: this.model,
       system: systemPrompt,
       messages: [...history, userMessage],
+      onError: ({ error }) => {
+        this.logger.error(
+          `[${sessionId}] LLM generation error: ${String(error)}`,
+        );
+      },
     });
 
     // ── Stage 5: Return stream + lazy citations builder ──────────────────────
