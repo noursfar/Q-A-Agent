@@ -20,7 +20,7 @@ export default function SourcesPanel({ citation, isOpen, onClose }: SourcesPanel
       {/* Panel */}
       <div
         className={`
-          fixed top-0 right-0 h-full w-full sm:w-[380px] z-50
+          fixed lg:absolute top-0 right-0 h-full w-full sm:w-[380px] z-50
           bg-navy-900/95 backdrop-blur-xl border-l border-white/5
           transform transition-transform duration-300 ease-out
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}

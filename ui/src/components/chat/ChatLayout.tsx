@@ -94,7 +94,9 @@ export default function ChatLayout() {
         />
 
         <div className="flex-1 flex overflow-hidden relative">
-          <div className="flex-1 flex flex-col min-w-0">
+          <div 
+            className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-out ${selectedCitation !== null ? 'lg:mr-[380px]' : ''}`}
+          >
             <MessageList
               messages={messages}
               status={status}
