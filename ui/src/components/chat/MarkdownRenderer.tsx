@@ -3,7 +3,7 @@ import remarkGfm from 'remark-gfm';
 import type { Components } from 'react-markdown';
 import type { Citation } from '../../types/chat';
 import CitationPopover from './CitationPopover';
-
+import { SPLIT_CITATION_REGEX, EXACT_CITATION_REGEX } from '../../utils/text';
 interface MarkdownRendererProps {
   content: string;
   citations: Citation[];
@@ -18,11 +18,10 @@ function processInlineSources(
   onCitationClick: (citation: Citation, index: number) => void,
 ): React.ReactNode[] {
   // Split the text by [Source: Title] or [Source: Title ] etc.
-  const regex = /(\[Source:\s*[^\]]+\])/g;
-  const parts = text.split(regex);
+  const parts = text.split(SPLIT_CITATION_REGEX);
 
   return parts.map((part, i) => {
-    const match = part.match(/^\[Source:\s*([^\]]+)\]$/);
+    const match = part.match(EXACT_CITATION_REGEX);
     if (match) {
       const sourceTitle = match[1].trim();
       const index = uniqueSources.indexOf(sourceTitle) + 1;
