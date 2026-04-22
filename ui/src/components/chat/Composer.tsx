@@ -62,7 +62,7 @@ export default function Composer({ onSend, disabled }: ComposerProps) {
         </button>
       </div>
       <p className="text-center text-[11px] text-white/20 mt-2">
-        Answers are grounded in your uploaded documents. Always verify important information.
+        Wikipedia powered answers
       </p>
     </div>
   );
