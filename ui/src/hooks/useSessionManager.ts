@@ -4,12 +4,18 @@ import type { SessionInfo } from '../types/chat';
 export function useSessionManager() {
   // Initialize sessions from localStorage, guaranteeing at least one session
   const [sessions, setSessions] = useState<SessionInfo[]>(() => {
-    const saved = localStorage.getItem('qa-agent-sessions');
-    const parsed = saved ? JSON.parse(saved) : [];
-    if (parsed.length === 0) {
-      return [{ id: crypto.randomUUID(), title: 'New Chat', createdAt: Date.now() }];
+    try {
+      const saved = localStorage.getItem('qa-agent-sessions');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load sessions from localStorage:', error);
     }
-    return parsed;
+    return [{ id: crypto.randomUUID(), title: 'New Chat', createdAt: Date.now() }];
   });
   
   // Initialize active session based on the initialized sessions array
@@ -17,7 +23,11 @@ export function useSessionManager() {
 
   // Persist sessions to localStorage when they change
   useEffect(() => {
-    localStorage.setItem('qa-agent-sessions', JSON.stringify(sessions));
+    try {
+      localStorage.setItem('qa-agent-sessions', JSON.stringify(sessions));
+    } catch (error) {
+      console.warn('Failed to save sessions to localStorage:', error);
+    }
   }, [sessions]);
 
   const createSession = useCallback(() => {
