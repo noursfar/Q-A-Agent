@@ -44,32 +44,32 @@ export default function ConversationSidebar({
       <aside
         className={`
           fixed lg:static inset-y-0 left-0 z-40
-          w-[280px] bg-navy-900/95 backdrop-blur-xl border-r border-white/5
+          w-[280px] bg-navy-950 border-r border-white/5
           flex flex-col shrink-0
           transition-transform duration-300 ease-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
         {/* New Chat button */}
-        <div className="p-3">
+        <div className="p-4">
           <button
             onClick={() => {
               onNewChat();
               onClose();
             }}
-            className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-sm text-blue-400 font-medium transition-colors cursor-pointer"
+            className="w-full flex items-center gap-2 px-4 py-3 rounded-lg bg-[#14B8A6] hover:bg-[#0d9488] text-sm text-navy-950 font-semibold transition-all cursor-pointer shadow-lg shadow-[#14B8A6]/10 hover:shadow-[#14B8A6]/20"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth={2}
+              strokeWidth={2.5}
               className="w-4 h-4"
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            New Chat
+            New chat
           </button>
         </div>
 

@@ -71,26 +71,22 @@ export default function ChatLayout() {
     setSelectedCitation(citation);
   }, []);
 
-  const currentSessionTitle =
-    sessions.find((s) => s.id === activeSessionId)?.title || 'New Chat';
-
   return (
-    <div className="flex h-screen bg-navy-950 overflow-hidden font-sans">
-      <ConversationSidebar
-        sessions={sessions}
-        activeSessionId={activeSessionId}
-        isOpen={isSidebarOpen}
-        onNewChat={createSession}
-        onSelectSession={switchSession}
-        onDeleteSession={deleteSession}
-        onClose={() => setIsSidebarOpen(false)}
+    <div className="flex flex-col h-screen bg-navy-950 overflow-hidden font-sans">
+      <TopBar
+        status={status}
+        onToggleSidebar={() => setIsSidebarOpen(true)}
       />
 
-      <div className="flex-1 flex flex-col relative min-w-0">
-        <TopBar
-          status={status}
-          sessionTitle={currentSessionTitle}
-          onToggleSidebar={() => setIsSidebarOpen(true)}
+      <div className="flex-1 flex overflow-hidden relative min-w-0">
+        <ConversationSidebar
+          sessions={sessions}
+          activeSessionId={activeSessionId}
+          isOpen={isSidebarOpen}
+          onNewChat={createSession}
+          onSelectSession={switchSession}
+          onDeleteSession={deleteSession}
+          onClose={() => setIsSidebarOpen(false)}
         />
 
         <div className="flex-1 flex overflow-hidden relative">
