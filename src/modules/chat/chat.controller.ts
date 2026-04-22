@@ -46,29 +46,25 @@ export class ChatController {
 
     // ── 3. Create a UIMessageStream ───────────────────────────────────────────
     const stream = createUIMessageStream({
-      execute: ({ writer }) => {
+      execute: async ({ writer }) => {
         // Merge the text stream into the UI Message Stream
         writer.merge(streamResult.toUIMessageStream());
 
         // Wait for text generation to finish, then generate & stream citations
-        (async () => {
-          try {
-            await streamResult.text;
-            const citations = await getCitations();
-            writer.write({
-              type: 'data-citations',
-              data: citations,
-            });
-          } catch (error) {
-            this.logger.error(
-              `[${sessionId}] Citations error: ${String(error)}`,
-            );
-            writer.write({
-              type: 'error',
-              errorText: 'Failed to generate citations',
-            });
-          }
-        })();
+        try {
+          await streamResult.text;
+          const citations = await getCitations();
+          writer.write({
+            type: 'data-citations',
+            data: citations,
+          });
+        } catch (error) {
+          this.logger.error(`[${sessionId}] Citations error: ${String(error)}`);
+          writer.write({
+            type: 'error',
+            errorText: 'Failed to generate citations',
+          });
+        }
       },
       onError: (error) => {
         this.logger.error(`[${sessionId}] Stream error: ${String(error)}`);

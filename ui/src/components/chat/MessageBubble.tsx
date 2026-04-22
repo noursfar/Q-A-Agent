@@ -69,13 +69,7 @@ export default function MessageBubble({ message, onCitationClick }: MessageBubbl
       {/* Message content */}
       <div className="max-w-[80%] flex flex-col gap-2">
         <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-navy-800/80 border border-white/5">
-          <MarkdownRenderer
-            content={text}
-            citations={citations}
-            onCitationClick={(idx) => {
-              if (citations[idx]) onCitationClick(citations[idx], idx);
-            }}
-          />
+          <MarkdownRenderer content={text} />
         </div>
 
         {/* Citation chips row */}

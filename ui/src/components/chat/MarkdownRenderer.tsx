@@ -1,83 +1,15 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Components } from 'react-markdown';
-import type { Citation } from '../../types/chat';
-import CitationChip from './CitationChip';
 
 interface MarkdownRendererProps {
   content: string;
-  citations: Citation[];
-  onCitationClick: (index: number) => void;
-}
-
-/**
- * Processes a text string and replaces [n] citation markers with CitationChip components.
- * Returns an array of React nodes: plain strings and CitationChip elements interleaved.
- */
-function processInlineCitations(
-  text: string,
-  citations: Citation[],
-  onCitationClick: (index: number) => void,
-): React.ReactNode[] {
-  const parts = text.split(/(\[\d+\])/g);
-  return parts.map((part, i) => {
-    const match = part.match(/^\[(\d+)\]$/);
-    if (match) {
-      const num = parseInt(match[1], 10);
-      const zeroIndex = num - 1; // backend uses 1-based in text
-      const citation = citations[zeroIndex];
-      if (citation) {
-        return (
-          <CitationChip
-            key={i}
-            index={zeroIndex}
-            citation={citation}
-            onClick={() => onCitationClick(zeroIndex)}
-          />
-        );
-      }
-    }
-    return part;
-  });
 }
 
 export default function MarkdownRenderer({
   content,
-  citations,
-  onCitationClick,
 }: MarkdownRendererProps) {
   const components: Components = {
-    // Override paragraph to process inline citation markers
-    p({ children }) {
-      const processChildren = (child: React.ReactNode): React.ReactNode => {
-        if (typeof child === 'string') {
-          return processInlineCitations(child, citations, onCitationClick);
-        }
-        return child;
-      };
-
-      const processed = Array.isArray(children)
-        ? children.flatMap(processChildren)
-        : processChildren(children);
-
-      return <p>{processed}</p>;
-    },
-
-    // Override li to also process inline citations in list items
-    li({ children }) {
-      const processChildren = (child: React.ReactNode): React.ReactNode => {
-        if (typeof child === 'string') {
-          return processInlineCitations(child, citations, onCitationClick);
-        }
-        return child;
-      };
-
-      const processed = Array.isArray(children)
-        ? children.flatMap(processChildren)
-        : processChildren(children);
-
-      return <li>{processed}</li>;
-    },
 
     // Style code blocks
     code({ className, children }) {
