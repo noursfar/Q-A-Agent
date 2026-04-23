@@ -11,10 +11,8 @@ import { AppModule } from '../src/app.module.js';
 import { RetrievalService } from '../src/modules/retrieval/retrieval.service.js';
 import type { RerankResult } from '../src/modules/retrieval/dto/retrieval.dto.js';
 import { buildSystemPrompt } from '../src/common/prompts/system.prompt.js';
-import { buildCitationPrompt } from '../src/common/prompts/citation.prompt.js';
 import { buildEvaluationPrompt } from '../src/common/prompts/evaluation.prompt.js';
 import { createLlmModel } from '../src/common/utils/llm-provider.factory.js';
-import { CitationSchema } from '../src/modules/chat/dto/chat.dto.js';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -24,6 +22,7 @@ interface TestCase {
   question: string;
   expectedSourceTitles?: string[];
   sessionId?: string;
+  shouldRefuse?: boolean;
 }
 
 interface TestResult {
@@ -70,40 +69,71 @@ const EvaluationSchema = z.object({
 
 /**
  * Programmatic citation accuracy check per PROJECT_GOAL.md §5.
- *
- * For factual / multi-doc: measures overlap between cited source titles
- * and expected source titles (fuzzy substring match).
- *
- * For out-of-scope: a correct behavior is citing NOTHING — the agent
- * should have declined to answer. So zero citations = 1.0 accuracy.
+ * This metric is computed from citations parsed directly from the answer text.
  */
 function computeCitationAccuracy(
   citedSources: string[],
   expectedSources: string[] | undefined,
-  category: string,
+  shouldRefuse: boolean,
 ): number {
-  const isOutOfScope =
-    category === 'out-of-scope' ||
-    !expectedSources ||
-    expectedSources.length === 0;
-
-  if (isOutOfScope) {
-    // Correct behavior = no citations made
+  // Refusal cases are expected to contain no citations.
+  if (shouldRefuse) {
     return citedSources.length === 0 ? 1.0 : 0.0;
   }
 
-  if (citedSources.length === 0) return 0.0;
+  if (!expectedSources || expectedSources.length === 0) {
+    return 0.0;
+  }
+  if (citedSources.length === 0) {
+    return 0.0;
+  }
 
-  // Fuzzy match: check if each expected title appears (as substring) in any cited title
-  const matched = expectedSources.filter((expected) =>
-    citedSources.some(
-      (cited) =>
-        cited.toLowerCase().includes(expected.toLowerCase().slice(0, 25)) ||
-        expected.toLowerCase().includes(cited.toLowerCase().slice(0, 25)),
-    ),
+  const uniqueCited = [...new Set(citedSources)];
+  const uniqueExpected = [...new Set(expectedSources)];
+
+  // Recall: how many expected sources are cited.
+  const matchedExpected = uniqueExpected.filter((expected) =>
+    uniqueCited.some((cited) => isTitleMatch(cited, expected)),
   ).length;
+  const recall = matchedExpected / uniqueExpected.length;
 
-  return Math.min(matched / expectedSources.length, 1.0);
+  // Precision: how many cited sources are actually expected.
+  const matchedCited = uniqueCited.filter((cited) =>
+    uniqueExpected.some((expected) => isTitleMatch(cited, expected)),
+  ).length;
+  const precision = matchedCited / uniqueCited.length;
+
+  // Balanced metric to penalize both missing and extra/wrong citations.
+  return Number(((precision + recall) / 2).toFixed(4));
+}
+
+function parseCitedSourcesFromAnswer(answer: string): string[] {
+  const regex = /\[Source:\s*([^\]]+)\]/g;
+  const matches: string[] = [];
+  let m: RegExpExecArray | null;
+
+  while ((m = regex.exec(answer)) !== null) {
+    const title = m[1]?.trim();
+    if (title) {
+      matches.push(title);
+    }
+  }
+
+  return matches;
+}
+
+function isTitleMatch(a: string, b: string): boolean {
+  const left = normalizeTitle(a);
+  const right = normalizeTitle(b);
+  return left.includes(right) || right.includes(left);
+}
+
+function normalizeTitle(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[\s_-]+/g, ' ')
+    .replace(/[^\w() ]/g, '')
+    .trim();
 }
 
 // ─── Output Formatting ────────────────────────────────────────────────────────
@@ -252,16 +282,10 @@ async function bootstrap() {
         sessionHistory.set(tc.sessionId, updated.slice(-10));
       }
 
-      // ── Stage 3: Citation extraction (structured, via generateObject) ──────
-      const citationPrompt = buildCitationPrompt(answer, context);
-      const { object: citationObj } = await generateObject({
-        model,
-        schema: CitationSchema,
-        prompt: citationPrompt,
-      });
-      const citedSources = citationObj.citations.map((c) => c.sourceTitle);
+      // ── Stage 3: Programmatically parse citations from answer text ──────────
+      const citedSources = parseCitedSourcesFromAnswer(answer);
 
-      // ── Stage 4: LLM-as-Judge (reuse buildEvaluationPrompt from Phase 4) ──
+      // ── Stage 4: LLM-as-Judge (relevance + groundedness) ───────────────────
       const evalPrompt = buildEvaluationPrompt(tc.question, answer, context);
       const { object: evalResult } = await generateObject({
         model,
@@ -273,7 +297,7 @@ async function bootstrap() {
       const citationAccuracy = computeCitationAccuracy(
         citedSources,
         tc.expectedSourceTitles,
-        tc.category,
+        tc.shouldRefuse === true,
       );
 
       const durationMs = Date.now() - startMs;

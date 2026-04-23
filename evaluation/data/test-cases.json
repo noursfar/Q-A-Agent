@@ -155,91 +155,99 @@
     "id": "followup-001a",
     "category": "followup",
     "question": "Who developed ChatGPT?",
-    "sessionId": "eval-session-001"
+    "sessionId": "eval-session-001",
+    "expectedSourceTitles": ["ChatGPT", "OpenAI"]
   },
   {
     "id": "followup-001b",
     "category": "followup",
     "question": "What underlying model version powers its latest iteration?",
-    "sessionId": "eval-session-001"
+    "sessionId": "eval-session-001",
+    "expectedSourceTitles": ["ChatGPT", "GPT-4"]
   },
   {
     "id": "followup-002a",
     "category": "followup",
     "question": "What is DALL-E?",
-    "sessionId": "eval-session-002"
+    "sessionId": "eval-session-002",
+    "expectedSourceTitles": ["DALL-E", "OpenAI"]
   },
   {
     "id": "followup-002b",
     "category": "followup",
     "question": "How does it compare to other generative models?",
-    "sessionId": "eval-session-002"
+    "sessionId": "eval-session-002",
+    "expectedSourceTitles": ["DALL-E", "Generative adversarial network"]
   },
   {
     "id": "followup-003a",
     "category": "followup",
     "question": "What is NVIDIA famous for in the AI hardware space?",
-    "sessionId": "eval-session-003"
+    "sessionId": "eval-session-003",
+    "expectedSourceTitles": ["NVIDIA"]
   },
   {
     "id": "followup-003b",
     "category": "followup",
     "question": "Why are GPUs so important for training neural networks?",
-    "sessionId": "eval-session-003"
+    "sessionId": "eval-session-003",
+    "expectedSourceTitles": ["NVIDIA", "Neural network (machine learning)", "Deep learning"]
   },
   {
     "id": "followup-004a",
     "category": "followup",
     "question": "Define Reinforcement Learning.",
-    "sessionId": "eval-session-004"
+    "sessionId": "eval-session-004",
+    "expectedSourceTitles": ["Reinforcement learning", "Machine learning"]
   },
   {
     "id": "followup-004b",
     "category": "followup",
     "question": "Was it used to train AlphaGo?",
-    "sessionId": "eval-session-004"
+    "sessionId": "eval-session-004",
+    "expectedSourceTitles": ["AlphaGo", "Reinforcement learning"]
   },
 
   {
     "id": "out-of-scope-001",
     "category": "out-of-scope",
     "question": "What is the capital of France?",
-    "expectedSourceTitles": []
+    "shouldRefuse": true
   },
   {
     "id": "out-of-scope-002",
     "category": "out-of-scope",
     "question": "How do you bake a chocolate cake?",
-    "expectedSourceTitles": []
+    "shouldRefuse": true
   },
   {
     "id": "out-of-scope-003",
     "category": "out-of-scope",
     "question": "What are the rules of basketball?",
-    "expectedSourceTitles": []
+    "shouldRefuse": true
   },
   {
     "id": "out-of-scope-004",
     "category": "out-of-scope",
     "question": "Who won the World Cup in 2022?",
-    "expectedSourceTitles": []
+    "shouldRefuse": true
   },
   {
     "id": "out-of-scope-005",
     "category": "out-of-scope",
     "question": "Can you summarize the plot of Harry Potter?",
-    "expectedSourceTitles": []
+    "shouldRefuse": true
   },
   {
     "id": "out-of-scope-006",
     "category": "out-of-scope",
     "question": "What is the fastest animal on Earth?",
-    "expectedSourceTitles": []
+    "shouldRefuse": true
   },
   {
     "id": "out-of-scope-007",
     "category": "out-of-scope",
     "question": "How tall is Mount Everest?",
-    "expectedSourceTitles": []
+    "shouldRefuse": true
   }
 ]
