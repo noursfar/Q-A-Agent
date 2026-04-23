@@ -11,8 +11,10 @@ import { AppModule } from '../src/app.module.js';
 import { RetrievalService } from '../src/modules/retrieval/retrieval.service.js';
 import type { RerankResult } from '../src/modules/retrieval/dto/retrieval.dto.js';
 import { buildSystemPrompt } from '../src/common/prompts/system.prompt.js';
+import { buildCitationPrompt } from '../src/common/prompts/citation.prompt.js';
 import { buildEvaluationPrompt } from '../src/common/prompts/evaluation.prompt.js';
 import { createLlmModel } from '../src/common/utils/llm-provider.factory.js';
+import { CitationSchema } from '../src/modules/chat/dto/chat.dto.js';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -30,15 +32,20 @@ interface TestResult {
   category: string;
   question: string;
   answer: string;
-  relevanceScore: number; // LLM-as-judge: answerRelevance 1–5
-  groundednessScore: number; // LLM-as-judge: faithfulness 1–5
-  citationAccuracy: number; // Programmatic: 0.0–1.0
+  relevanceScore: number;     // LLM-as-judge: answerRelevance 1–5
+  groundednessScore: number;  // LLM-as-judge: faithfulness 1–5
+  citationAccuracy: number;   // Programmatic: 0.0–1.0 (based on structured block)
   evalReasoning: {
     relevance: string;
     groundedness: string;
   };
   retrievedSources: string[];
+  /** Source titles extracted from the structured generateObject citations block */
   citedSources: string[];
+  /** Raw [Source: X] markers parsed directly from the answer text */
+  inlineCitedSources: string[];
+  /** Claims the LLM could not attribute to any source (hallucination signals) */
+  uncitedClaims: string[];
   durationMs: number;
   error?: string;
 }
@@ -282,8 +289,21 @@ async function bootstrap() {
         sessionHistory.set(tc.sessionId, updated.slice(-10));
       }
 
-      // ── Stage 3: Programmatically parse citations from answer text ──────────
-      const citedSources = parseCitedSourcesFromAnswer(answer);
+      // ── Stage 3: Parse inline [Source: X] markers from the raw answer text ──
+      const inlineCitedSources = parseCitedSourcesFromAnswer(answer);
+
+      // ── Stage 3.5: Structured citation extraction via generateObject ─────────
+      // This mirrors exactly what ChatService.generateCitations() does in production.
+      // It validates the structured citations block (CitationSchema) and surfaces
+      // uncited claims (potential hallucinations) for the evaluation report.
+      const citationPrompt = buildCitationPrompt(answer, context);
+      const { object: citationObj } = await generateObject({
+        model,
+        schema: CitationSchema,
+        prompt: citationPrompt,
+      });
+      const citedSources = citationObj.citations.map((c) => c.sourceTitle);
+      const uncitedClaims = citationObj.uncitedClaims;
 
       // ── Stage 4: LLM-as-Judge (relevance + groundedness) ───────────────────
       const evalPrompt = buildEvaluationPrompt(tc.question, answer, context);
@@ -293,7 +313,9 @@ async function bootstrap() {
         prompt: evalPrompt,
       });
 
-      // ── Stage 5: Programmatic citation accuracy ────────────────────────────
+      // ── Stage 5: Programmatic citation accuracy (based on structured block) ──
+      // The structured block is the authoritative source — it reflects what the
+      // production ChatService actually returns to the client.
       const citationAccuracy = computeCitationAccuracy(
         citedSources,
         tc.expectedSourceTitles,
@@ -315,7 +337,9 @@ async function bootstrap() {
           groundedness: evalResult.faithfulness.reasoning,
         },
         retrievedSources,
-        citedSources,
+        citedSources,         // from structured generateObject block
+        inlineCitedSources,   // from regex parse of raw answer text
+        uncitedClaims,        // potential hallucinations flagged by citation auditor
         durationMs,
       };
 
@@ -337,6 +361,8 @@ async function bootstrap() {
         evalReasoning: { relevance: '', groundedness: '' },
         retrievedSources: [],
         citedSources: [],
+        inlineCitedSources: [],
+        uncitedClaims: [],
         durationMs,
         error: String(err),
       });

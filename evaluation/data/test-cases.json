@@ -3,152 +3,259 @@
     "id": "factual-001",
     "category": "factual",
     "question": "What is the Transformer architecture and when was it introduced?",
-    "expectedSourceTitles": ["Transformer (machine learning model)"]
+    "expectedSourceTitles": [
+      "Transformer (machine learning model)",
+      "Attention mechanism",
+      "Large language model"
+    ]
   },
   {
     "id": "factual-002",
     "category": "factual",
     "question": "Who created the Claude language model series?",
-    "expectedSourceTitles": ["Claude (language model)"]
+    "expectedSourceTitles": [
+      "Claude (language model)",
+      "Anthropic"
+    ]
   },
   {
     "id": "factual-003",
     "category": "factual",
     "question": "What is Word2vec used for?",
-    "expectedSourceTitles": ["Word2vec"]
+    "expectedSourceTitles": [
+      "Word2vec",
+      "Embedding (machine learning)",
+      "Natural language processing"
+    ]
   },
   {
     "id": "factual-004",
     "category": "factual",
     "question": "What does a Convolutional Neural Network (CNN) excel at?",
-    "expectedSourceTitles": ["Convolutional neural network"]
+    "expectedSourceTitles": [
+      "Convolutional neural network",
+      "Deep learning",
+      "Neural network (machine learning)"
+    ]
   },
   {
     "id": "factual-005",
     "category": "factual",
     "question": "Explain the concept of Algorithmic Bias.",
-    "expectedSourceTitles": ["Algorithmic bias"]
+    "expectedSourceTitles": [
+      "Algorithmic bias",
+      "AI safety",
+      "Machine learning"
+    ]
   },
   {
     "id": "factual-006",
     "category": "factual",
     "question": "What organization developed AlphaGo?",
-    "expectedSourceTitles": ["AlphaGo", "Google DeepMind"]
+    "expectedSourceTitles": [
+      "AlphaGo",
+      "Google DeepMind"
+    ]
   },
   {
     "id": "factual-007",
     "category": "factual",
     "question": "What does BERT stand for?",
-    "expectedSourceTitles": ["BERT (language model)"]
+    "expectedSourceTitles": [
+      "BERT (language model)",
+      "Transformer (machine learning model)",
+      "Large language model"
+    ]
   },
   {
     "id": "factual-008",
     "category": "factual",
     "question": "What is the main function of an attention mechanism in neural networks?",
-    "expectedSourceTitles": ["Attention (machine learning)"]
+    "expectedSourceTitles": [
+      "Attention mechanism",
+      "Transformer (machine learning model)",
+      "Neural network (machine learning)"
+    ]
   },
   {
     "id": "factual-009",
     "category": "factual",
     "question": "Who founded Hugging Face?",
-    "expectedSourceTitles": ["Hugging Face"]
+    "expectedSourceTitles": [
+      "Hugging Face"
+    ]
   },
   {
     "id": "factual-010",
     "category": "factual",
     "question": "What are generative adversarial networks (GANs) composed of?",
-    "expectedSourceTitles": ["Generative adversarial network"]
+    "expectedSourceTitles": [
+      "Generative adversarial network",
+      "Deep learning",
+      "Neural network (machine learning)"
+    ]
   },
   {
     "id": "factual-011",
     "category": "factual",
     "question": "What is the core idea behind deep learning?",
-    "expectedSourceTitles": ["Deep learning"]
+    "expectedSourceTitles": [
+      "Deep learning",
+      "Neural network (machine learning)",
+      "Machine learning"
+    ]
   },
   {
     "id": "factual-012",
     "category": "factual",
     "question": "What is the purpose of fine-tuning in machine learning?",
-    "expectedSourceTitles": ["Fine-tuning (deep learning)"]
+    "expectedSourceTitles": [
+      "Fine-tuning (deep learning)",
+      "Large language model",
+      "Machine learning"
+    ]
   },
   {
     "id": "factual-013",
     "category": "factual",
     "question": "What is PyTorch primarily used for?",
-    "expectedSourceTitles": ["PyTorch"]
+    "expectedSourceTitles": [
+      "PyTorch",
+      "Deep learning",
+      "Machine learning"
+    ]
   },
   {
     "id": "factual-014",
     "category": "factual",
     "question": "Describe the main role of TensorFlow.",
-    "expectedSourceTitles": ["TensorFlow"]
+    "expectedSourceTitles": [
+      "TensorFlow",
+      "Deep learning",
+      "Machine learning"
+    ]
   },
   {
     "id": "factual-015",
     "category": "factual",
     "question": "What is prompt engineering?",
-    "expectedSourceTitles": ["Prompt engineering"]
+    "expectedSourceTitles": [
+      "Prompt engineering",
+      "Large language model"
+    ]
   },
 
   {
     "id": "multi-doc-001",
     "category": "multi-doc",
     "question": "How do GPT-4 and Claude differ in their development origins?",
-    "expectedSourceTitles": ["GPT-4", "Claude (language model)", "OpenAI", "Anthropic"]
+    "expectedSourceTitles": [
+      "GPT-4",
+      "Claude (language model)",
+      "OpenAI",
+      "Anthropic",
+      "ChatGPT",
+      "Large language model"
+    ]
   },
   {
     "id": "multi-doc-002",
     "category": "multi-doc",
     "question": "Explain how embeddings support Retrieval-Augmented Generation.",
-    "expectedSourceTitles": ["Word embedding", "Retrieval-augmented generation"]
+    "expectedSourceTitles": [
+      "Embedding (machine learning)",
+      "Retrieval-augmented generation",
+      "Word2vec",
+      "Large language model"
+    ]
   },
   {
     "id": "multi-doc-003",
     "category": "multi-doc",
     "question": "What is the relationship between Google DeepMind and AlphaGo?",
-    "expectedSourceTitles": ["Google DeepMind", "AlphaGo"]
+    "expectedSourceTitles": [
+      "Google DeepMind",
+      "AlphaGo",
+      "Reinforcement learning"
+    ]
   },
   {
     "id": "multi-doc-004",
     "category": "multi-doc",
     "question": "How does NLP utilize recurrent neural networks?",
-    "expectedSourceTitles": ["Natural language processing", "Recurrent neural network"]
+    "expectedSourceTitles": [
+      "Natural language processing",
+      "Recurrent neural network",
+      "Deep learning",
+      "Neural network (machine learning)"
+    ]
   },
   {
     "id": "multi-doc-005",
     "category": "multi-doc",
     "question": "Discuss existential risks from AGI in relation to AI safety.",
-    "expectedSourceTitles": ["Existential risk from artificial general intelligence", "AI safety"]
+    "expectedSourceTitles": [
+      "Existential risk from artificial general intelligence",
+      "AI safety",
+      "Algorithmic bias"
+    ]
   },
   {
     "id": "multi-doc-006",
     "category": "multi-doc",
     "question": "How does Anthropic's approach to language models compare to OpenAI's?",
-    "expectedSourceTitles": ["Anthropic", "OpenAI", "Claude (language model)", "ChatGPT"]
+    "expectedSourceTitles": [
+      "Anthropic",
+      "OpenAI",
+      "Claude (language model)",
+      "ChatGPT",
+      "Large language model"
+    ]
   },
   {
     "id": "multi-doc-007",
     "category": "multi-doc",
     "question": "Explain the role of attention mechanisms within large language models.",
-    "expectedSourceTitles": ["Attention (machine learning)", "Large language model"]
+    "expectedSourceTitles": [
+      "Attention mechanism",
+      "Large language model",
+      "Transformer (machine learning model)"
+    ]
   },
   {
     "id": "multi-doc-008",
     "category": "multi-doc",
     "question": "How did the transformer architecture influence BERT and GPT models?",
-    "expectedSourceTitles": ["Transformer (machine learning model)", "BERT (language model)", "GPT-4", "OpenAI"]
+    "expectedSourceTitles": [
+      "Transformer (machine learning model)",
+      "BERT (language model)",
+      "GPT-4",
+      "OpenAI",
+      "Large language model",
+      "Attention mechanism"
+    ]
   },
   {
     "id": "multi-doc-009",
     "category": "multi-doc",
     "question": "Compare TensorFlow and PyTorch.",
-    "expectedSourceTitles": ["TensorFlow", "PyTorch"]
+    "expectedSourceTitles": [
+      "TensorFlow",
+      "PyTorch",
+      "Deep learning",
+      "Machine learning"
+    ]
   },
   {
     "id": "multi-doc-010",
     "category": "multi-doc",
     "question": "What does Meta AI contribute to the open-source LLM landscape with LLaMA?",
-    "expectedSourceTitles": ["Meta AI", "Llama (language model)"]
+    "expectedSourceTitles": [
+      "Meta AI",
+      "Llama (language model)",
+      "Large language model",
+      "OpenAI"
+    ]
   },
 
   {
@@ -156,56 +263,92 @@
     "category": "followup",
     "question": "Who developed ChatGPT?",
     "sessionId": "eval-session-001",
-    "expectedSourceTitles": ["ChatGPT", "OpenAI"]
+    "expectedSourceTitles": [
+      "ChatGPT",
+      "OpenAI",
+      "GPT-4",
+      "Large language model"
+    ]
   },
   {
     "id": "followup-001b",
     "category": "followup",
     "question": "What underlying model version powers its latest iteration?",
     "sessionId": "eval-session-001",
-    "expectedSourceTitles": ["ChatGPT", "GPT-4"]
+    "expectedSourceTitles": [
+      "ChatGPT",
+      "GPT-4",
+      "OpenAI",
+      "Large language model"
+    ]
   },
   {
     "id": "followup-002a",
     "category": "followup",
     "question": "What is DALL-E?",
     "sessionId": "eval-session-002",
-    "expectedSourceTitles": ["DALL-E", "OpenAI"]
+    "expectedSourceTitles": [
+      "DALL-E",
+      "OpenAI",
+      "Generative adversarial network"
+    ]
   },
   {
     "id": "followup-002b",
     "category": "followup",
     "question": "How does it compare to other generative models?",
     "sessionId": "eval-session-002",
-    "expectedSourceTitles": ["DALL-E", "Generative adversarial network"]
+    "expectedSourceTitles": [
+      "DALL-E",
+      "Generative adversarial network",
+      "Large language model",
+      "OpenAI"
+    ]
   },
   {
     "id": "followup-003a",
     "category": "followup",
     "question": "What is NVIDIA famous for in the AI hardware space?",
     "sessionId": "eval-session-003",
-    "expectedSourceTitles": ["NVIDIA"]
+    "expectedSourceTitles": [
+      "NVIDIA",
+      "Deep learning",
+      "Neural network (machine learning)"
+    ]
   },
   {
     "id": "followup-003b",
     "category": "followup",
     "question": "Why are GPUs so important for training neural networks?",
     "sessionId": "eval-session-003",
-    "expectedSourceTitles": ["NVIDIA", "Neural network (machine learning)", "Deep learning"]
+    "expectedSourceTitles": [
+      "NVIDIA",
+      "Neural network (machine learning)",
+      "Deep learning",
+      "Machine learning"
+    ]
   },
   {
     "id": "followup-004a",
     "category": "followup",
     "question": "Define Reinforcement Learning.",
     "sessionId": "eval-session-004",
-    "expectedSourceTitles": ["Reinforcement learning", "Machine learning"]
+    "expectedSourceTitles": [
+      "Reinforcement learning",
+      "Machine learning",
+      "Deep learning"
+    ]
   },
   {
     "id": "followup-004b",
     "category": "followup",
     "question": "Was it used to train AlphaGo?",
     "sessionId": "eval-session-004",
-    "expectedSourceTitles": ["AlphaGo", "Reinforcement learning"]
+    "expectedSourceTitles": [
+      "AlphaGo",
+      "Reinforcement learning",
+      "Google DeepMind"
+    ]
   },
 
   {
