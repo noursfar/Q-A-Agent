@@ -66,58 +66,52 @@ function askQuestion() {
             const line = lines[i].trim();
             if (!line) continue;
 
-            if (line.startsWith('event: ')) {
-              const eventName = line.substring(7);
-              const dataLine = lines[i + 1]?.trim() || '';
+            if (line.startsWith('data: ')) {
+              const dataStr = line.substring(6).trim();
+              if (dataStr === '[DONE]') continue;
 
-              if (dataLine.startsWith('data: ')) {
-                const dataStr = dataLine.substring(6);
-                i++; // Skip the data line since we processed it
+              try {
+                const parsed = JSON.parse(dataStr);
 
-                if (eventName === 'text') {
-                  // Stream text chunk instantly to standard out
-                  try {
-                    const chunk = JSON.parse(dataStr) as string;
-                    process.stdout.write(chunk);
-                  } catch {
-                    process.stdout.write(dataStr);
-                  }
-                } else if (eventName === 'citations') {
-                  try {
-                    const parsed = JSON.parse(dataStr) as CitationResult;
-                    console.log('\n\n📚 SOURCES EXTRACTED:');
-                    if (parsed.citations && parsed.citations.length > 0) {
-                      parsed.citations.forEach((c) => {
-                        console.log(
-                          `\n  [ Chunk ${c.chunkIndex} ] ${c.sourceTitle}`,
-                        );
-                        console.log(`      "${c.claim}"`);
-                      });
-                    } else {
+                if (parsed.type === 'text-delta') {
+                  process.stdout.write(parsed.delta);
+                } else if (parsed.type === 'data-citations') {
+                  const citationsData = parsed.data as CitationResult;
+                  console.log('\n\n📚 SOURCES EXTRACTED:');
+                  if (
+                    citationsData.citations &&
+                    citationsData.citations.length > 0
+                  ) {
+                    citationsData.citations.forEach((c) => {
                       console.log(
-                        '  No external sources were referenced for this answer.',
+                        `\n  [ Chunk ${c.chunkIndex} ] ${c.sourceTitle}`,
                       );
-                    }
-
-                    if (
-                      parsed.uncitedClaims &&
-                      parsed.uncitedClaims.length > 0
-                    ) {
-                      console.log(
-                        '\n⚠️  UNVERIFIED CLAIMS (Potential Hallucinations):',
-                      );
-                      parsed.uncitedClaims.forEach((c: string) => {
-                        console.log(`  - ${c}`);
-                      });
-                    }
-                  } catch {
-                    console.log('\n\n📚 SOURCES EXTRACTED:', dataStr);
+                      console.log(`      "${c.claim}"`);
+                    });
+                  } else {
+                    console.log(
+                      '  No external sources were referenced for this answer.',
+                    );
                   }
-                } else if (eventName === 'error') {
-                  console.log(`\n❌ Error from server: ${dataStr}`);
-                } else if (eventName === 'done') {
-                  // Done event, do nothing
+
+                  if (
+                    citationsData.uncitedClaims &&
+                    citationsData.uncitedClaims.length > 0
+                  ) {
+                    console.log(
+                      '\n⚠️  UNVERIFIED CLAIMS (Potential Hallucinations):',
+                    );
+                    citationsData.uncitedClaims.forEach((c: string) => {
+                      console.log(`  - ${c}`);
+                    });
+                  }
+                } else if (parsed.type === 'error') {
+                  console.log(
+                    `\n❌ Error from server: ${parsed.errorText || dataStr}`,
+                  );
                 }
+              } catch {
+                // Ignore parse errors for unhandled events
               }
             }
           }
