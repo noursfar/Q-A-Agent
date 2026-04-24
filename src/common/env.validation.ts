@@ -14,7 +14,7 @@ export const envSchema = z.object({
 
   // ─── LLM Provider keys (text generation) ──────────────────────────────────────
   // OpenRouter
-  OPENROUTER_API_KEY: z.string().min(1, 'OPENROUTER_API_KEY is required'),
+  OPENROUTER_API_KEY: z.string().optional(),
   OPENROUTER_MODEL: z.string().default('openai/gpt-oss-120b:free'),
 
   // Mistral
