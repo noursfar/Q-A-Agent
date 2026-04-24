@@ -234,7 +234,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const retrievalService = app.get(RetrievalService);
 
-  // Create LLM model directly from factory (not via DI, since LLM_MODEL is scoped to ChatModule)
+  // Create LLM model directly from factory to avoid the overhead of resolving the full HTTP application context
   const model = createLlmModel(configService);
 
   // ── Load test cases ──────────────────────────────────────────────────────────
