@@ -1,25 +1,5 @@
 import { RerankResult } from '../../modules/retrieval/dto/retrieval.dto.js';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-/**
- * A single extracted citation mapping a claim to its source.
- * This is the shape the LLM is instructed to produce per citation.
- */
-export interface ExtractedCitation {
-  claim: string; // The specific factual claim from the answer
-  sourceTitle: string; // The article title it was sourced from
-  chunkIndex: number; // The exact chunk ID for traceability
-}
-
-/**
- * The full structured output produced by the citation extraction prompt.
- */
-export interface CitationExtractionResult {
-  citations: ExtractedCitation[];
-  uncitedClaims: string[]; // Claims the LLM could NOT trace back to a source (hallucination signals)
-}
-
 // ─── Source List Formatter ────────────────────────────────────────────────────
 
 /**

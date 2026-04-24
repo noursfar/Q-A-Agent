@@ -1,26 +1,5 @@
 import { RerankResult } from '../../modules/retrieval/dto/retrieval.dto.js';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-/**
- * A single scored evaluation metric with mandatory reasoning.
- */
-export interface MetricScore {
-  score: 1 | 2 | 3 | 4 | 5;
-  reasoning: string;
-}
-
-/**
- * The full structured output produced by the evaluation prompt.
- * Mirrors the RAGAS evaluation dimensions.
- */
-export interface EvaluationResult {
-  faithfulness: MetricScore; // Are all claims grounded in the provided context?
-  answerRelevance: MetricScore; // Does the answer directly address the question?
-  completeness: MetricScore; // Did the answer use all relevant information from context?
-  overallScore: number; // Weighted average: faithfulness(40%) + relevance(40%) + completeness(20%)
-}
-
 // ─── Context Formatter ────────────────────────────────────────────────────────
 
 function formatContextForJudge(chunks: RerankResult[]): string {
