@@ -117,6 +117,8 @@ Three dedicated prompt builders live in `src/common/prompts/`:
 
 Faithfulness is weighted highest (40%) because hallucination is the most critical failure mode in a production RAG system.
 
+*Note on Citation Schema Deviation:* The citation extraction schema was intentionally modified from the original challenge specification (swapping `id`/`excerpt` for `claim`/`chunkIndex` and adding `uncitedClaims`). This deviation was a deliberate architectural choice to enable granular hallucination tracking (via `uncitedClaims`) and to power the interactive side-by-side UI where precise chunks are mapped to specific claims.
+
 ### 7. Chat & Streaming Architecture
 - **In-Memory Session Memory:** Follow-up questions are supported by maintaining a strict sliding window of the last 10 messages (`Map<string, ModelMessage[]>`). Older token-heavy context is pruned to keep requests cost-effective.
 - **UI Message Stream Protocol:** The backend uses `createUIMessageStream` from the AI SDK to create a structured message stream. The `ChatService.chat()` method returns a two-phased result: a live `streamResult` for immediate text streaming, and a lazy `getCitations()` callback that generates the structured citation block after the stream completes. The controller merges the text stream via `writer.merge(streamResult.toUIMessageStream())` and appends citations as a typed `data-citations` part — all over a single HTTP response piped via `pipeUIMessageStreamToResponse`.
