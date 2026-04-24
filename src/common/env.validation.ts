@@ -21,9 +21,10 @@ export const envSchema = z.object({
   MISTRAL_API_KEY: z.string().min(1, 'MISTRAL_API_KEY is required'),
   MISTRAL_MODEL: z.string().default('mistral-small-latest'),
 
-  // ─── Voyage AI (text embedding — always active) ──────────────────────────────
+  // ─── Voyage AI (text embedding & reranking — always active) ──────────────────────────────
   VOYAGE_API_KEY: z.string().min(1, 'VOYAGE_API_KEY is required'),
   VOYAGE_MODEL: z.string().default('voyage-4-lite'),
+  VOYAGE_RERANK_MODEL: z.string().default('rerank-2'),
 
   // ─── Qdrant Vector DB ────────────────────────────────────────────────────────
   QDRANT_URL: z.string().url().default('http://localhost:6333'),

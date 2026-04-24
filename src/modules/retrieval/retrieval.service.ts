@@ -9,6 +9,7 @@ export class RetrievalService {
   private readonly logger = new Logger(RetrievalService.name);
   private readonly collectionName: string;
   private readonly voyageModel: string;
+  private readonly voyageRerankModel: string;
 
   constructor(
     private readonly configService: ConfigService,
@@ -17,6 +18,7 @@ export class RetrievalService {
   ) {
     this.collectionName = this.configService.get<string>('QDRANT_COLLECTION')!;
     this.voyageModel = this.configService.get<string>('VOYAGE_MODEL')!;
+    this.voyageRerankModel = this.configService.get<string>('VOYAGE_RERANK_MODEL')!;
   }
 
   /**
@@ -109,7 +111,7 @@ export class RetrievalService {
     const response = await this.voyageClient.rerank({
       query,
       documents,
-      model: 'rerank-2',
+      model: this.voyageRerankModel,
       topK: topK,
       returnDocuments: false, // We already map indices back below, saves network bandwidth
     });
