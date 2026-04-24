@@ -8,14 +8,14 @@ interface MarkdownRendererProps {
   content: string;
   citations: Citation[];
   uniqueSources: string[];
-  onCitationClick: (citation: Citation, index: number) => void;
+  onCitationClick: (citation: Citation) => void;
 }
 
 function processInlineSources(
   text: string,
   uniqueSources: string[],
   citations: Citation[],
-  onCitationClick: (citation: Citation, index: number) => void,
+  onCitationClick: (citation: Citation) => void,
 ): React.ReactNode[] {
   // Split the text by [Source: Title] or [Source: Title ] etc.
   const parts = text.split(SPLIT_CITATION_REGEX);
@@ -36,7 +36,7 @@ function processInlineSources(
             sourceTitle={sourceTitle}
             citations={citations}
             onOpenDetail={() => {
-              if (matchingCitation) onCitationClick(matchingCitation, index - 1);
+              if (matchingCitation) onCitationClick(matchingCitation);
             }}
           />
         );

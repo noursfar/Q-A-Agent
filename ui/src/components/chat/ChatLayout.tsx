@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useSessionManager } from '../../hooks/useSessionManager';
+import { useMessagePersistence } from '../../hooks/useMessagePersistence';
 import type { Citation, ChatUIMessage } from '../../types/chat';
 
 import TopBar from './TopBar';
@@ -19,6 +20,8 @@ export default function ChatLayout() {
     deleteSession,
     updateSessionTitle,
   } = useSessionManager();
+
+  const { loadMessages, saveMessages, clearMessages } = useMessagePersistence();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCitation, setSelectedCitation] = useState<Citation | null>(null);
@@ -47,30 +50,41 @@ export default function ChatLayout() {
     }),
   });
 
+  // Restore persisted messages whenever the active session changes
+  useEffect(() => {
+    const stored = loadMessages(activeSessionId);
+    setMessages(stored);
+    setSelectedCitation(null);
+  }, [activeSessionId, loadMessages, setMessages]);
+
+  // Persist messages to localStorage after each complete response
+  useEffect(() => {
+    if (status === 'ready') {
+      saveMessages(activeSessionId, messages);
+    }
+  }, [status, messages, activeSessionId, saveMessages]);
+
   const handleSelectSession = useCallback((id: string) => {
     switchSession(id);
-    setMessages([]);
-    setSelectedCitation(null);
-  }, [switchSession, setMessages]);
+    // Message loading + citation reset are handled by the activeSessionId effect
+  }, [switchSession]);
 
   const handleNewChat = useCallback(() => {
     createSession();
-    setMessages([]);
-    setSelectedCitation(null);
-  }, [createSession, setMessages]);
+    // Message loading + citation reset are handled by the activeSessionId effect
+  }, [createSession]);
 
   const handleDeleteSession = useCallback((id: string) => {
-    const isDeletingActive = id === activeSessionId;
+    clearMessages(id);
     deleteSession(id);
-    if (isDeletingActive) {
-      setMessages([]);
+    if (id === activeSessionId) {
       setSelectedCitation(null);
     }
-  }, [deleteSession, activeSessionId, setMessages]);
+  }, [clearMessages, deleteSession, activeSessionId]);
 
   const handleSend = useCallback(
     (text: string) => {
-      // If this is a brand new session, update its title
+      // If this is a brand-new session, update its title
       const currentSession = sessions.find((s) => s.id === activeSessionId);
       if (currentSession && currentSession.title === 'New Chat') {
         updateSessionTitle(activeSessionId, text);
@@ -103,7 +117,7 @@ export default function ChatLayout() {
         />
 
         <div className="flex-1 flex overflow-hidden relative">
-          <div 
+          <div
             className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-out ${selectedCitation !== null ? 'lg:mr-[380px]' : ''}`}
           >
             <MessageList
