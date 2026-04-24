@@ -23,7 +23,7 @@ Build an intelligent Q&A agent that answers questions over a corpus of documents
    cp .env.example .env
    ```
    *Required Keys:*
-   *   `OPENROUTER_API_KEY`: Or the API key of the Mistral provider if modified in code.
+   *   `MISTRAL_API_KEY`: Required for text generation.
    *   `VOYAGE_API_KEY`: Required for embeddings.
 
 4. **Download the Wikipedia Corpus**
@@ -84,9 +84,9 @@ Build an intelligent Q&A agent that answers questions over a corpus of documents
 **Why Qdrant?**
 Qdrant is extremely easy to implement via a local Docker container for development while offering robust multi-tenant capabilities, sub-millisecond retrieval efficiency via HNSW indexing, and an intuitive native TypeScript client (`@qdrant/js-client-rest`).
 
-### 2. LLM Provider: OpenRouter (gpt-oss-120b:free)
-**Why OpenRouter & GPT-OSS?**
-OpenRouter grants us an ecosystem wrapper; we do not suffer from provider lock-in and can access a diverse myriad of models. Using `openai/gpt-oss-120b:free` guarantees that text generation costs are minimized during aggressive development and RAG evaluation sweeps, while preserving high instruction compliance for JSON-structured outputs.
+### 2. LLM Provider: Mistral AI (mistral-small-latest)
+**Why Mistral AI?**
+While both OpenRouter and Mistral offer free models for development, Mistral was chosen because it is significantly faster and more powerful. OpenRouter's free tier imposes strict rate limits that can bottleneck RAG evaluation sweeps, whereas Mistral's direct API does not have these restrictive limits. Using `mistral-small-latest` guarantees high-speed generation, minimized costs during aggressive development, and excellent instruction compliance for JSON-structured outputs.
 
 ### 3. Embedding Model: Voyage AI (voyage-4-lite)
 **Why Voyage AI?**
@@ -116,6 +116,8 @@ Three dedicated prompt builders live in `src/common/prompts/`:
 | `evaluation.prompt.ts` | LLM-as-judge with three RAGAS-inspired metrics: **Faithfulness** (40%) / **Answer Relevance** (40%) / **Completeness** (20%). Each scored 1–5 with mandatory reasoning. Outputs `overallScore` as a weighted average |
 
 Faithfulness is weighted highest (40%) because hallucination is the most critical failure mode in a production RAG system.
+
+*Note on Citation Schema Deviation:* The citation extraction schema was intentionally modified from the original challenge specification (swapping `id`/`excerpt` for `claim`/`chunkIndex` and adding `uncitedClaims`). This deviation was a deliberate architectural choice to enable granular hallucination tracking (via `uncitedClaims`) and to power the interactive side-by-side UI where precise chunks are mapped to specific claims.
 
 ### 7. Chat & Streaming Architecture
 - **In-Memory Session Memory:** Follow-up questions are supported by maintaining a strict sliding window of the last 10 messages (`Map<string, ModelMessage[]>`). Older token-heavy context is pruned to keep requests cost-effective.

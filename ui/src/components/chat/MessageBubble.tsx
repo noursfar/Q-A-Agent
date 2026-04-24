@@ -4,7 +4,7 @@ import MarkdownRenderer from './MarkdownRenderer';
 import { extractUniqueSources } from '../../utils/text';
 interface MessageBubbleProps {
   message: UIMessage;
-  onCitationClick: (citation: Citation, index: number) => void;
+  onCitationClick: (citation: Citation) => void;
 }
 
 /**
@@ -97,7 +97,7 @@ export default function MessageBubble({ message, onCitationClick }: MessageBubbl
                 <button
                   key={index}
                   onClick={() => {
-                    if (matchingCitation) onCitationClick(matchingCitation, index - 1);
+                    if (matchingCitation) onCitationClick(matchingCitation);
                   }}
                   className="group flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 transition-colors cursor-pointer"
                 >

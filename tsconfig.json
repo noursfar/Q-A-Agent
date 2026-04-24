@@ -16,11 +16,9 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "strict": true,
+    "noFallthroughCasesInSwitch": true
   },
   "exclude": ["node_modules", "dist", "ui"]
 }
