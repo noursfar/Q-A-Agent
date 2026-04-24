@@ -32,9 +32,9 @@ interface TestResult {
   category: string;
   question: string;
   answer: string;
-  relevanceScore: number;     // LLM-as-judge: answerRelevance 1–5
-  groundednessScore: number;  // LLM-as-judge: faithfulness 1–5
-  citationAccuracy: number;   // Programmatic: 0.0–1.0 (based on structured block)
+  relevanceScore: number; // LLM-as-judge: answerRelevance 1–5
+  groundednessScore: number; // LLM-as-judge: faithfulness 1–5
+  citationAccuracy: number; // Programmatic: 0.0–1.0 (based on structured block)
   evalReasoning: {
     relevance: string;
     groundedness: string;
@@ -197,6 +197,13 @@ function printResultsTable(results: TestResult[]): void {
   }
 
   const valid = results.filter((r) => !r.error);
+
+  if (valid.length === 0) {
+    console.log('\n  ❌ OVERALL → No successful evaluations to aggregate.');
+    console.log(line);
+    return;
+  }
+
   const oR = (
     valid.reduce((s, r) => s + r.relevanceScore, 0) / valid.length
   ).toFixed(2);
@@ -231,9 +238,7 @@ async function bootstrap() {
   const model = createLlmModel(configService);
 
   // ── Load test cases ──────────────────────────────────────────────────────────
-  const testCasesPath = path.resolve(
-    'evaluation/data/test-cases.json',
-  );
+  const testCasesPath = path.resolve('evaluation/data/test-cases.json');
   if (!fs.existsSync(testCasesPath)) {
     console.error(`❌ Test cases file not found: ${testCasesPath}`);
     process.exit(1);
@@ -337,9 +342,9 @@ async function bootstrap() {
           groundedness: evalResult.faithfulness.reasoning,
         },
         retrievedSources,
-        citedSources,         // from structured generateObject block
-        inlineCitedSources,   // from regex parse of raw answer text
-        uncitedClaims,        // potential hallucinations flagged by citation auditor
+        citedSources, // from structured generateObject block
+        inlineCitedSources, // from regex parse of raw answer text
+        uncitedClaims, // potential hallucinations flagged by citation auditor
         durationMs,
       };
 
