@@ -54,7 +54,6 @@ const AI_ARTICLES = [
   // Infrastructure & Tools
   'TensorFlow',
   'PyTorch',
-  'Hugging Face',
 ];
 
 // ─── Types ────────────────────────────────────────────────────────────────────

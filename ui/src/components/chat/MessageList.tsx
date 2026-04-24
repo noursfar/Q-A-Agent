@@ -8,7 +8,7 @@ import EmptyState from './EmptyState';
 interface MessageListProps {
   messages: UIMessage[];
   status: 'submitted' | 'streaming' | 'ready' | 'error';
-  onCitationClick: (citation: Citation, index: number) => void;
+  onCitationClick: (citation: Citation) => void;
   onSuggestionClick: (text: string) => void;
 }
 
