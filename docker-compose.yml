@@ -20,5 +20,16 @@ services:
       qdrant:
         condition: service_started
 
+  ui:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    container_name: ui
+    ports:
+      - "80:80"
+#    depends_on:
+#      ai:
+#        condition: service_started
+
 volumes:
   qdrant_data:
