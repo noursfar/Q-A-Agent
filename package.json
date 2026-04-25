@@ -11,7 +11,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main.js",
     "chat": "tsx scripts/chat-cli.ts",
     "evaluate": "nest build && node dist/scripts/evaluate.js",
     "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
