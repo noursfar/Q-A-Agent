@@ -31,5 +31,20 @@ services:
 #      ai:
 #        condition: service_started
 
+  seeder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: seeder
+    env_file: .env
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+    command: sh -c "node dist/scripts/fetch-articles.js && node dist/scripts/ingest.js"
+    depends_on:
+      qdrant:
+        condition: service_started
+    profiles:
+      - seed
+
 volumes:
   qdrant_data:
