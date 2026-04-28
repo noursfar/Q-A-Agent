@@ -1,4 +1,12 @@
 services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
   qdrant:
     image: qdrant/qdrant:latest
     ports:
@@ -14,9 +22,12 @@ services:
     env_file: .env
     environment:
       - QDRANT_URL=http://qdrant:6333   # Override localhost → Docker internal DNS
+      - REDIS_URL=redis://redis:6379
     ports:
       - "3000:3000"
     depends_on:
+      redis:
+        condition: service_started
       qdrant:
         condition: service_started
 
@@ -48,3 +59,4 @@ services:
 
 volumes:
   qdrant_data:
+  redis_data:
