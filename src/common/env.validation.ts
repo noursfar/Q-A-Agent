@@ -30,6 +30,10 @@ export const envSchema = z.object({
   QDRANT_URL: z.string().url().default('http://localhost:6333'),
   QDRANT_API_KEY: z.string().optional(),
   QDRANT_COLLECTION: z.string().default('wikiHub'),
+
+  // ─── Redis (Session Storage) ─────────────────────────────────────────────────
+  REDIS_URL: z.string().url().default('redis://localhost:6379'),
+  REDIS_TTL_MINUTES: z.coerce.number().default(30),
 });
 
 export type EnvVars = z.infer<typeof envSchema>;

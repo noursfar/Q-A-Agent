@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { createEmbeddingClient } from '../../common/utils/embedding-provider.factory.js';
 import { createQdrantClient } from '../../common/utils/qdrant-provider.factory.js';
 import { createLlmModel } from '../../common/utils/llm-provider.factory.js';
+import { createRedisClient } from '../../common/utils/redis-provider.factory.js';
 
 @Global() //@Global() to avoid needing to explicitly imports
 @Module({
@@ -25,7 +26,13 @@ import { createLlmModel } from '../../common/utils/llm-provider.factory.js';
         createLlmModel(configService),
       inject: [ConfigService],
     },
+    {
+      provide: 'REDIS_CLIENT',
+      useFactory: (configService: ConfigService) =>
+        createRedisClient(configService),
+      inject: [ConfigService],
+    },
   ],
-  exports: ['QDRANT_CLIENT', 'VOYAGE_CLIENT', 'LLM_MODEL'],
+  exports: ['QDRANT_CLIENT', 'VOYAGE_CLIENT', 'LLM_MODEL', 'REDIS_CLIENT'],
 })
 export class CoreModule {}

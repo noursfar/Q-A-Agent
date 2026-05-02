@@ -1,6 +1,8 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import type { LanguageModel, ModelMessage } from 'ai';
 import { streamText, generateObject } from 'ai';
+import Redis from 'ioredis';
 import { RetrievalService } from '../retrieval/retrieval.service.js';
 import { RerankResult } from '../retrieval/dto/retrieval.dto.js';
 import { buildSystemPrompt } from '../../common/prompts/system.prompt.js';
@@ -11,44 +13,56 @@ import { CitationSchema, CitationResult } from './dto/chat.dto.js';
 
 /** Maximum messages preserved per session (sliding window) */
 const MAX_SESSION_MESSAGES = 10;
-
-// ─── Service ──────────────────────────────────────────────────────────────────
+const SESSION_PREFIX = 'sessions:';
 
 @Injectable()
 export class ChatService {
   private readonly logger = new Logger(ChatService.name);
-
-  /**
-   * In-memory session store.
-   * sessionId -> CoreMessage[]
-   */
-  private readonly sessions = new Map<string, ModelMessage[]>();
+  private readonly ttlSeconds: number;
 
   constructor(
     @Inject('LLM_MODEL') private readonly model: LanguageModel,
+    @Inject('REDIS_CLIENT') private readonly redis: Redis,
+    private readonly configService: ConfigService,
     private readonly retrievalService: RetrievalService,
-  ) {}
-
-  // ─── Session Memory Helpers ─────────────────────────────────────────────────
-
-  private getHistory(sessionId: string): ModelMessage[] {
-    return this.sessions.get(sessionId) ?? [];
+  ) {
+    this.ttlSeconds = this.configService.get<number>('REDIS_TTL_MINUTES')! * 60;
   }
 
-  /**
-   * Appends a message to the session history and applies the sliding window.
-   * When history exceeds MAX_SESSION_MESSAGES, the oldest messages are dropped
-   * from the front of the array, ensuring we always keep the most recent N turns.
-   */
-  private saveMessage(sessionId: string, message: ModelMessage): void {
-    const history = this.sessions.get(sessionId) ?? [];
-    history.push(message);
+  private getSessionKey(sessionId: string): string {
+    return `${SESSION_PREFIX}${sessionId}`;
+  }
 
-    if (history.length > MAX_SESSION_MESSAGES) {
-      history.splice(0, history.length - MAX_SESSION_MESSAGES);
+  private async getHistory(sessionId: string): Promise<ModelMessage[]> {
+    try {
+      const data = await this.redis.get(this.getSessionKey(sessionId));
+      if (!data) return [];
+      return JSON.parse(data) as ModelMessage[];
+    } catch (error) {
+      this.logger.error(`Failed to get session ${sessionId}: ${String(error)}`);
+      return [];
     }
+  }
 
-    this.sessions.set(sessionId, history);
+  private async saveMessage(
+    sessionId: string,
+    message: ModelMessage,
+  ): Promise<void> {
+    try {
+      const history = await this.getHistory(sessionId);
+      history.push(message);
+
+      if (history.length > MAX_SESSION_MESSAGES) {
+        history.splice(0, history.length - MAX_SESSION_MESSAGES);
+      }
+
+      const key = this.getSessionKey(sessionId);
+      await this.redis.set(key, JSON.stringify(history), 'EX', this.ttlSeconds);
+    } catch (error) {
+      this.logger.error(
+        `Failed to save session ${sessionId}: ${String(error)}`,
+      );
+    }
   }
 
   // ─── Main Orchestrator ──────────────────────────────────────────────────────
@@ -85,9 +99,7 @@ export class ChatService {
 
     // ── Stage 2: Build system prompt with injected context ──────────────────
     const systemPrompt = buildSystemPrompt(context, message);
-
-    // ── Stage 3: Load conversation history and append the new user message ──
-    const history = this.getHistory(sessionId);
+    const history = await this.getHistory(sessionId);
     const userMessage: ModelMessage = { role: 'user', content: message };
 
     // ── Stage 4: Start streaming ─────────────────────────────────────────────
@@ -120,9 +132,8 @@ export class ChatService {
           `[${sessionId}] Stream complete. Generating citations...`,
         );
 
-        // Persist to session memory after we have the full answer
-        this.saveMessage(sessionId, userMessage);
-        this.saveMessage(sessionId, {
+        await this.saveMessage(sessionId, userMessage);
+        await this.saveMessage(sessionId, {
           role: 'assistant',
           content: fullAnswer,
         });
@@ -142,7 +153,6 @@ export class ChatService {
     answer: string,
     context: RerankResult[],
   ): Promise<CitationResult> {
-    // Use the dedicated citation extraction prompt built in Phase 4
     const citationPrompt = buildCitationPrompt(answer, context);
 
     const { object } = await generateObject({
