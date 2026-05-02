@@ -1,0 +1,11 @@
+node_modules
+dist
+ui
+.git
+.idea
+.vscode
+.env
+.env.*
+*.log
+data
+evaluation
